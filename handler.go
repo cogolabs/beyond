@@ -66,7 +66,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if email != "" {
-		proxy.ServeHTTP(w, r)
+		if r.Header.Get("Upgrade") == "websocket" {
+			hostWS[r.Host].ServeHTTP(w, r)
+		} else {
+			proxy.ServeHTTP(w, r)
+		}
 		return
 	}
 

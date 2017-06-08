@@ -47,7 +47,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	session := store.New("beyond")
 	email, _ := session.Values["email"].(string)
 	next, _ := session.Values["next"].(string)
-	proxy := hostProxy[r.URL.Host]
+	proxy := hostProxy[r.URL.Hostname()]
 	if proxy == nil {
 		w.WriteHeader(404)
 		fmt.Fprint(w, "unknown URL")

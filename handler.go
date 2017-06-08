@@ -25,7 +25,11 @@ func consume(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session := store.New("beyond")
+	session, err := store.Get(r, "beyond")
+	if err != nil {
+		w.WriteHeader(400)
+		fmt.Fprintln(w, err.Error())
+	}
 	session.Values["email"] = email
 	next, _ := session.Values["next"].(string)
 	session.Values["next"] = ""
@@ -44,10 +48,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session := store.New("beyond")
+	session, err := store.Get(r, "beyond")
+	if err != nil {
+		session = store.New("beyond")
+	}
 	email, _ := session.Values["email"].(string)
 	next, _ := session.Values["next"].(string)
-	proxy := hostProxy[r.URL.Hostname()]
+	proxy := hostProxy[r.Host]
 	if proxy == nil {
 		w.WriteHeader(404)
 		fmt.Fprint(w, "unknown URL")

@@ -65,7 +65,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method == "OPTIONS" || email != "" {
+	if email != "" || whitelistHost[r.Host] {
 		if r.Header.Get("Upgrade") == "websocket" {
 			hostWS[r.Host].ServeHTTP(w, r)
 		} else {

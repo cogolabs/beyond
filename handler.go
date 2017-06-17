@@ -58,6 +58,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	email, _ := session.Values["email"].(string)
 	next, _ := session.Values["next"].(string)
 	proxy := hostProxy[r.Host]
+
+	// unconfigured
 	if proxy == nil {
 		setCacheControl(w)
 		w.WriteHeader(404)
@@ -65,6 +67,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// allow
 	if email != "" || whitelistHost[r.Host] {
 		if r.Header.Get("Upgrade") == "websocket" {
 			hostWS[r.Host].ServeHTTP(w, r)
@@ -74,7 +77,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// deny
 	setCacheControl(w)
+
+	// short-circuit WS+AJAX
+	if r.Header.Get("Upgrade") != "" || r.Header.Get("X-Requested-With") != "" {
+		w.WriteHeader(401)
+		return
+	}
+
+	// TODO: interstitial landing to guarantee interactive before cookie save
 	if next == "" {
 		session.Values["next"] = "https://" + r.Host + r.RequestURI
 		session.Save(w)

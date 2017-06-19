@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
 	"log"
 	"net/http"
@@ -22,6 +23,11 @@ func init() {
 	flag.Parse()
 	store.Config.Domain = *domain
 	store.Config.MaxAge = *maxAge
+
+	// allow insecure backends
+	http.DefaultTransport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 }
 
 func main() {

@@ -33,6 +33,13 @@ func init() {
 		websocketproxy.DefaultDialer.TLSClientConfig = &tls.Config{}
 	}
 	websocketproxy.DefaultDialer.TLSClientConfig.InsecureSkipVerify = true
+	websocketproxy.DefaultDialer.EnableCompression = true
+	websocketproxy.DefaultUpgrader.EnableCompression = true
+}
+
+func websocketproxyDirector(incoming *http.Request, out http.Header) {
+	out.Set("User-Agent", incoming.UserAgent())
+	out.Set("X-Forwarded-Proto", "https")
 }
 
 func main() {

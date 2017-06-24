@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/dghubble/sessions"
+	"github.com/koding/websocketproxy"
 )
 
 var (
@@ -28,6 +29,10 @@ func init() {
 	http.DefaultTransport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
+	if websocketproxy.DefaultDialer.TLSClientConfig == nil {
+		websocketproxy.DefaultDialer.TLSClientConfig = &tls.Config{}
+	}
+	websocketproxy.DefaultDialer.TLSClientConfig.InsecureSkipVerify = true
 }
 
 func main() {

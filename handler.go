@@ -5,11 +5,34 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
-func consume(w http.ResponseWriter, r *http.Request) {
+func beyond(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
+	switch r.URL.Path {
 
+	case "/onelogin/consume":
+		consume(w, r)
+		return
+
+	case "/launch":
+		session, err := store.Get(r, "beyond")
+		if err != nil {
+			session = store.New("beyond")
+		}
+		session.Values["next"] = r.FormValue("next")
+		session.Save(w)
+		fmt.Fprintf(w, `
+<script type="text/javascript">
+  window.location.replace("https://app.onelogin.com/launch/%d");
+</script>
+  `, *appid)
+
+	}
+}
+
+func consume(w http.ResponseWriter, r *http.Request) {
 	var (
 		firstname = r.FormValue("firstname")
 		lastname  = r.FormValue("lastname")
@@ -42,12 +65,12 @@ func consume(w http.ResponseWriter, r *http.Request) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	switch r.URL.Path {
-	case "/ping":
+	if r.URL.Path == "/ping" {
 		fmt.Fprintln(w, "OK")
 		return
-	case "/onelogin/consume":
-		consume(w, r)
+	}
+	if r.Host == *host {
+		beyond(w, r)
 		return
 	}
 
@@ -56,7 +79,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		session = store.New("beyond")
 	}
 	email, _ := session.Values["email"].(string)
-	next, _ := session.Values["next"].(string)
 	proxy := hostProxy[r.Host]
 
 	// unconfigured
@@ -86,18 +108,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: interstitial landing to guarantee interactive before cookie save
-	if next == "" {
-		session.Values["next"] = "https://" + r.Host + r.RequestURI
-		session.Save(w)
-	}
+	// interstitial landing to guarantee interactive before cookie save
+	v := url.Values{}
+	v.Set("next", "https://"+r.Host+r.RequestURI)
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(401)
 	fmt.Fprintf(w, `
-    <script type="text/javascript">
-    window.location.replace("https://app.onelogin.com/launch/%d");
-    </script>
-  `, *appid)
+<script type="text/javascript">
+  window.location.replace("https://%s/launch?%s");
+</script>
+  `, *host, v.Encode())
 }
 
 func setCacheControl(w http.ResponseWriter) {

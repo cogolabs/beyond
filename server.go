@@ -14,6 +14,7 @@ var (
 	bind   = flag.String("http", ":80", "")
 	appid  = flag.Int64("appid", 442422, "")
 	domain = flag.String("domain", ".colofoo.net", "")
+	host   = flag.String("host", "beyond.colofoo.net", "")
 	maxAge = flag.Int("max-age", 3600*6, "")
 	token  = flag.String("token", "FC144thCRZpyHM7qGDjt", "")
 

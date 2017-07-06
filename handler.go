@@ -109,15 +109,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// interstitial landing to guarantee interactive before cookie save
-	v := url.Values{}
-	v.Set("next", "https://"+r.Host+r.RequestURI)
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(401)
 	fmt.Fprintf(w, `
 <script type="text/javascript">
-  window.location.replace("https://%s/launch?%s");
+  window.location.replace("https://%s/launch?next=%s");
 </script>
-  `, *host, v.Encode())
+  `, *host, url.QueryEscape("https://"+r.Host+r.RequestURI))
 }
 
 func setCacheControl(w http.ResponseWriter) {

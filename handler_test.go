@@ -43,3 +43,15 @@ func TestHandlerLaunch(t *testing.T) {
 		assert.Equal(t, "\n<script type=\"text/javascript\">\n  window.location.replace(\"https://app.onelogin.com/launch/"+strconv.FormatInt(*appid, 10)+"\");\n</script>\n  ", response.Body)
 	})
 }
+
+func TestHandlerWhitelist(t *testing.T) {
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/", nil)
+		request.Host = "assets.git.colofoo.net"
+		assert.Nil(t, err)
+		response := r.Do(request)
+		assert.Equal(t, 200, response.StatusCode)
+		assert.NotEqual(t, "", response.Header.Get("Set-Cookie"))
+		assert.Contains(t, response.Body, "Recent Repositories")
+	})
+}

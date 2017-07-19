@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	oidc "github.com/coreos/go-oidc"
@@ -9,8 +10,9 @@ import (
 )
 
 var (
+	oidcConfig   *oauth2.Config
 	oidcProvider *oidc.Provider
-	oidcO2Config *oauth2.Config
+	oidcVerifier *oidc.IDTokenVerifier
 )
 
 func init() {
@@ -33,6 +35,37 @@ func init() {
 		Scopes: []string{oidc.ScopeOpenID, "profile", "email"},
 	}
 
+	oidcVerifier = provider.Verifier(&oidc.Config{
+		ClientID: oauth2Config.ClientID,
+	})
 	oidcProvider = provider
-	oidcO2Config = oauth2Config
+	oidcConfig = oauth2Config
+}
+
+func oidcVerify(code string) (string, error) {
+	ctx := context.Background()
+	token, err := oidcConfig.Exchange(ctx, code)
+	if err != nil {
+		return "", err
+	}
+
+	rawID, ok := token.Extra("id_token").(string)
+	if !ok {
+		return "", fmt.Errorf("missing ID token")
+	}
+
+	tokenID, err := oidcVerifier.Verify(ctx, rawID)
+	if err != nil {
+		return "", err
+	}
+
+	var claims struct {
+		Email string `json:"email"`
+	}
+	err = tokenID.Claims(&claims)
+	if err != nil {
+		return "", err
+	}
+
+	return claims.Email, nil
 }

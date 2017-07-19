@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+
+	"golang.org/x/oauth2"
 )
 
 func beyond(w http.ResponseWriter, r *http.Request) {
@@ -23,11 +25,32 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 		}
 		session.Values["next"] = r.FormValue("next")
 		session.Save(w)
+
+		next := oidcConfig.AuthCodeURL("foo123", oauth2.AccessTypeOffline)
 		fmt.Fprintf(w, `
 <script type="text/javascript">
-  window.location.replace("https://app.onelogin.com/launch/%d");
+  window.location.replace("%s");
 </script>
-  `, *appid)
+  `, next)
+
+	case "/oidc":
+		email, err := oidcVerify(r.FormValue("code"))
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+			return
+		}
+		session, err := store.Get(r, "beyond")
+		if err != nil {
+			w.WriteHeader(400)
+			fmt.Fprintln(w, err.Error())
+			return
+		}
+		session.Values["email"] = email
+		next, _ := session.Values["next"].(string)
+		session.Values["next"] = ""
+		session.Save(w)
+
+		http.Redirect(w, r, next, 302)
 
 	}
 }

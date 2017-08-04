@@ -113,10 +113,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// allow
-	whitelist.RLock()
-	whitelisted := whitelist.m[r.Host]
-	whitelist.RUnlock()
-	if email != "" || whitelisted {
+	if email != "" || whitelisted(r.Host, r.URL.Path) {
 		if r.Header.Get("Upgrade") == "websocket" {
 			hostWS[r.Host].ServeHTTP(w, r)
 		} else {

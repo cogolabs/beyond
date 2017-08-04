@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"path"
 	"sync"
 )
 
@@ -15,13 +16,8 @@ var (
 
 	fence     = concurrentMapMapBool{m: map[string]map[string]bool{}}
 	sites     = concurrentMapMapBool{m: map[string]map[string]bool{}}
-	whitelist = concurrentMapBool{m: map[string]bool{}}
+	whitelist = concurrentMapMapBool{m: map[string]map[string]bool{}}
 )
-
-type concurrentMapBool struct {
-	sync.RWMutex
-	m map[string]bool
-}
 
 type concurrentMapMapBool struct {
 	sync.RWMutex
@@ -98,4 +94,21 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func whitelisted(host, urlpath string) bool {
+	whitelist.RLock()
+	allow := whitelist.m["host"][host]
+	paths := whitelist.m["path"]
+	whitelist.RUnlock()
+	if allow {
+		return true
+	}
+	p := path.Clean(urlpath)
+	for ; p != "/"; p = path.Dir(p) {
+		if paths[p] {
+			allow = true
+		}
+	}
+	return allow
 }

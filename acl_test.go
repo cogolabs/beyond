@@ -13,5 +13,6 @@ func TestACLRefresh(t *testing.T) {
 
 	assert.NotEmpty(t, fence.m)
 	assert.NotEmpty(t, sites.m["git"])
-	assert.NotEmpty(t, whitelist.m)
+	assert.NotEmpty(t, whitelist.m["host"])
+	assert.NotEmpty(t, whitelist.m["path"])
 }

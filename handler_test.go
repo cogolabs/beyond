@@ -53,4 +53,13 @@ func TestHandlerWhitelist(t *testing.T) {
 		assert.NotEqual(t, "", response.Header.Get("Set-Cookie"))
 		assert.Contains(t, response.Body, "Recent Repositories")
 	})
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/.well-known/acme-challenge/test", nil)
+		request.Host = "git.colofoo.net"
+		assert.Nil(t, err)
+		response := r.Do(request)
+		assert.Equal(t, 404, response.StatusCode)
+		assert.NotEqual(t, "", response.Header.Get("Set-Cookie"))
+		assert.Contains(t, response.Body, "Page not found")
+	})
 }

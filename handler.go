@@ -2,8 +2,6 @@ package main
 
 import (
 	"crypto/rand"
-	"crypto/sha1"
-	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,10 +13,6 @@ import (
 func beyond(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
 	switch r.URL.Path {
-
-	case "/onelogin/consume":
-		consume(w, r)
-		return
 
 	case "/launch":
 		session, err := store.Get(r, "beyond")
@@ -63,38 +57,6 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, next, 302)
 
 	}
-}
-
-func consume(w http.ResponseWriter, r *http.Request) {
-	var (
-		firstname = r.FormValue("firstname")
-		lastname  = r.FormValue("lastname")
-		email     = r.FormValue("email")
-		timestamp = r.FormValue("timestamp")
-		signature = r.FormValue("signature")
-	)
-	key := sha1.New()
-	key.Write([]byte(firstname + lastname + email + timestamp + *token))
-	keyx := hex.EncodeToString(key.Sum(nil))
-
-	if keyx != signature {
-		w.WriteHeader(403)
-		fmt.Fprintln(w, "invalid signature")
-		return
-	}
-
-	session, err := store.Get(r, "beyond")
-	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	session.Values["email"] = email
-	next, _ := session.Values["next"].(string)
-	session.Values["next"] = ""
-	session.Save(w)
-
-	http.Redirect(w, r, next, 302)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

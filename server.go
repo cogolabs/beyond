@@ -16,13 +16,16 @@ var (
 	domain = flag.String("domain", ".colofoo.net", "")
 	host   = flag.String("host", "beyond.colofoo.net", "")
 	maxAge = flag.Int("max-age", 3600*6, "")
-	token  = flag.String("token", "FC144thCRZpyHM7qGDjt", "")
 
-	store = sessions.NewCookieStore([]byte("t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u"), []byte("Q599vrruZRhLFC144thCRZpyHM7qGDjt"))
+	cookiekey1 = flag.String("cookie-key1", "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u", "keypair 1 for cookie crypto")
+	cookiekey2 = flag.String("cookie-key2", "Q599vrruZRhLFC144thCRZpyHM7qGDjt", "keypair 2 for cookie crypto")
+
+	store *sessions.CookieStore
 )
 
 func init() {
 	flag.Parse()
+	store = sessions.NewCookieStore([]byte(*cookiekey1), []byte(*cookiekey2))
 	store.Config.Domain = *domain
 	store.Config.MaxAge = *maxAge
 
@@ -44,5 +47,23 @@ func websocketproxyDirector(incoming *http.Request, out http.Header) {
 }
 
 func main() {
+	err := setup()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	log.Fatal(http.ListenAndServe(*bind, http.HandlerFunc(handler)))
+}
+
+func setup() error {
+	err := refreshFence()
+	if err == nil {
+		err = refreshSites()
+	}
+	if err == nil {
+		err = refreshWhitelist()
+	}
+	if err == nil {
+		err = reproxy()
+	}
+	return err
 }

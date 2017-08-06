@@ -1,0 +1,8 @@
+{
+ "host": {
+  "assets.github.com": true
+ },
+ "path": {
+  "/.well-known/acme-challenge": true
+ }
+}

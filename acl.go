@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"log"
 	"net/http"
 	"path"
 	"sync"
@@ -17,6 +16,8 @@ var (
 	fence     = concurrentMapMapBool{m: map[string]map[string]bool{}}
 	sites     = concurrentMapMapBool{m: map[string]map[string]bool{}}
 	whitelist = concurrentMapMapBool{m: map[string]map[string]bool{}}
+
+	httpACL = &http.Client{}
 )
 
 type concurrentMapMapBool struct {
@@ -25,7 +26,7 @@ type concurrentMapMapBool struct {
 }
 
 func refreshFence() error {
-	resp, err := http.Get(*fenceURL)
+	resp, err := httpACL.Get(*fenceURL)
 	if err != nil {
 		return err
 	}
@@ -47,7 +48,7 @@ func refreshFence() error {
 }
 
 func refreshSites() error {
-	resp, err := http.Get(*sitesURL)
+	resp, err := httpACL.Get(*sitesURL)
 	if err != nil {
 		return err
 	}
@@ -71,7 +72,7 @@ func refreshSites() error {
 }
 
 func refreshWhitelist() error {
-	resp, err := http.Get(*whitelistURL)
+	resp, err := httpACL.Get(*whitelistURL)
 	if err != nil {
 		return err
 	}
@@ -79,21 +80,6 @@ func refreshWhitelist() error {
 	whitelist.Lock()
 	defer whitelist.Unlock()
 	return json.NewDecoder(resp.Body).Decode(&whitelist.m)
-}
-
-func init() {
-	err := refreshFence()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = refreshSites()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = refreshWhitelist()
-	if err != nil {
-		log.Fatalln(err)
-	}
 }
 
 func whitelisted(host, urlpath string) bool {

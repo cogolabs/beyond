@@ -1,0 +1,35 @@
+{
+  "dev": [
+    "https://github.com",
+    "https://lab.colofoo.net",
+    "https://zenhub.colofoo.net",
+    "https://coveralls.colofoo.net",
+    "https://docker.colofoo.net",
+    "https://travis.colofoo.net",
+    "https://godoc.colofoo.net"
+  ],
+  "git": [
+    "https://github.com",
+    "https://assets.github.com",
+    "https://avatars.github.com",
+    "https://codeload.github.com",
+    "https://gist.github.com",
+    "https://gist-assets.github.com",
+    "https://gist-raw.github.com",
+    "https://media.github.com",
+    "https://pages.github.com",
+    "https://raw.github.com",
+    "https://render.github.com",
+    "https://reply.github.com",
+    "https://uploads.github.com"
+  ],
+  "logs": [
+    "https://grafana.colofoo.net",
+    "https://logstash.colofoo.net"
+  ],
+  "sentry": [
+    "http://sentry.colofoo.net",
+    "http://sentry7.colofoo.net",
+    "https://sentry8.colofoo.net"
+  ]
+}

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/rand"
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -24,9 +26,11 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 			session = store.New("beyond")
 		}
 		session.Values["next"] = r.FormValue("next")
+		state := randhex32()
+		session.Values["state"] = state
 		session.Save(w)
 
-		next := oidcConfig.AuthCodeURL("foo123", oauth2.AccessTypeOffline)
+		next := oidcConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
 		fmt.Fprintf(w, `
 <script type="text/javascript">
   window.location.replace("%s");
@@ -34,20 +38,26 @@ func beyond(w http.ResponseWriter, r *http.Request) {
   `, next)
 
 	case "/oidc":
-		email, err := oidcVerify(r.FormValue("code"))
-		if err != nil {
-			fmt.Fprintf(w, err.Error())
-			return
-		}
 		session, err := store.Get(r, "beyond")
 		if err != nil {
 			w.WriteHeader(400)
 			fmt.Fprintln(w, err.Error())
 			return
 		}
+		if state, ok := session.Values["state"].(string); !ok || state != r.FormValue("state") {
+			w.WriteHeader(403)
+			fmt.Fprintln(w, "invalid state")
+			return
+		}
+		email, err := oidcVerify(r.FormValue("code"))
+		if err != nil {
+			fmt.Fprintf(w, err.Error())
+			return
+		}
 		session.Values["email"] = email
 		next, _ := session.Values["next"].(string)
 		session.Values["next"] = ""
+		session.Values["state"] = ""
 		session.Save(w)
 
 		http.Redirect(w, r, next, 302)
@@ -143,4 +153,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func setCacheControl(w http.ResponseWriter) {
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+}
+
+func randhex32() string {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		log.Println(err)
+	}
+	return fmt.Sprintf("%x", b)
 }

@@ -45,7 +45,8 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 		}
 		email, err := oidcVerify(r.FormValue("code"))
 		if err != nil {
-			fmt.Fprintf(w, err.Error())
+			w.WriteHeader(400)
+			fmt.Fprintln(w, err.Error())
 			return
 		}
 		session.Values["email"] = email

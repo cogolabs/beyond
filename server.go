@@ -11,23 +11,24 @@ import (
 )
 
 var (
-	bind   = flag.String("http", ":80", "")
-	appid  = flag.Int64("appid", 442422, "")
-	domain = flag.String("domain", ".colofoo.net", "")
-	host   = flag.String("host", "beyond.colofoo.net", "")
-	maxAge = flag.Int("max-age", 3600*6, "")
+	bind = flag.String("http", ":80", "")
+	host = flag.String("host", "beyond.colofoo.net", "")
 
-	cookiekey1 = flag.String("cookie-key1", "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u", "keypair 1 for cookie crypto")
-	cookiekey2 = flag.String("cookie-key2", "Q599vrruZRhLFC144thCRZpyHM7qGDjt", "keypair 2 for cookie crypto")
+	cookieAge  = flag.Int("cookie-age", 3600*6, "MaxAge setting in seconds")
+	cookieDom  = flag.String("cookie-domain", ".colofoo.net", "")
+	cookieKey1 = flag.String("cookie-key1", "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u", "keypair 1 for cookie crypto")
+	cookieKey2 = flag.String("cookie-key2", "Q599vrruZRhLFC144thCRZpyHM7qGDjt", "keypair 2 for cookie crypto")
+
+	wsCompress = flag.Bool("websocket-compression", false, "(gorilla/experimental)")
 
 	store *sessions.CookieStore
 )
 
 func init() {
 	flag.Parse()
-	store = sessions.NewCookieStore([]byte(*cookiekey1), []byte(*cookiekey2))
-	store.Config.Domain = *domain
-	store.Config.MaxAge = *maxAge
+	store = sessions.NewCookieStore([]byte(*cookieKey1), []byte(*cookieKey2))
+	store.Config.Domain = *cookieDom
+	store.Config.MaxAge = *cookieAge
 
 	// allow insecure backends
 	http.DefaultTransport = &http.Transport{
@@ -37,8 +38,11 @@ func init() {
 		websocketproxy.DefaultDialer.TLSClientConfig = &tls.Config{}
 	}
 	websocketproxy.DefaultDialer.TLSClientConfig.InsecureSkipVerify = true
-	websocketproxy.DefaultDialer.EnableCompression = true
-	websocketproxy.DefaultUpgrader.EnableCompression = true
+	websocketproxy.DefaultDialer.EnableCompression = *wsCompress
+	websocketproxy.DefaultUpgrader.EnableCompression = *wsCompress
+	websocketproxy.DefaultUpgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
 }
 
 func websocketproxyDirector(incoming *http.Request, out http.Header) {

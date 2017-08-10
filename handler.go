@@ -87,7 +87,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// allow
 	if email != "" || whitelisted(r) {
 		if r.Header.Get("Upgrade") == "websocket" {
-			hostWS[r.Host].ServeHTTP(w, r)
+			newWebSocket(r).ServeHTTP(w, r)
 		} else {
 			proxy.ServeHTTP(w, r)
 		}

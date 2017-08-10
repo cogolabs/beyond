@@ -1,26 +1,31 @@
 package main
 
 import (
+	"log"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"strings"
 
 	"github.com/koding/websocketproxy"
 )
 
 var (
 	hostProxy = map[string]*httputil.ReverseProxy{}
-	hostWS    = map[string]*websocketproxy.WebsocketProxy{}
 )
 
-func http2ws(u string) string {
-	if strings.HasPrefix(u, "http:") {
-		return "ws:" + u[5:]
+func http2ws(r *http.Request) *url.URL {
+	target := "wss://" + r.Host + r.URL.String()
+	next, err := url.Parse(target)
+	if err != nil {
+		log.Printf("%s, parsing: %s", err, target)
 	}
-	if strings.HasPrefix(u, "https:") {
-		return "wss:" + u[6:]
-	}
-	return u
+	return next
+}
+
+func newWebSocket(r *http.Request) *websocketproxy.WebsocketProxy {
+	p := websocketproxy.NewProxy(http2ws(r))
+	p.Director = websocketproxyDirector
+	return p
 }
 
 func reproxy() error {
@@ -32,13 +37,7 @@ func reproxy() error {
 			if err != nil {
 				return err
 			}
-			w, err := url.Parse(http2ws(x))
-			if err != nil {
-				return err
-			}
 			hostProxy[u.Host] = httputil.NewSingleHostReverseProxy(u)
-			hostWS[u.Host] = websocketproxy.NewProxy(w)
-			hostWS[u.Host].Director = websocketproxyDirector
 		}
 	}
 	return nil

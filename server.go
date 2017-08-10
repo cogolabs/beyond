@@ -55,7 +55,10 @@ func main() {
 }
 
 func setup() error {
-	err := refreshFence()
+	err := oidcSetup()
+	if err == nil {
+		err = refreshFence()
+	}
 	if err == nil {
 		err = refreshSites()
 	}

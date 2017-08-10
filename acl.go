@@ -82,15 +82,16 @@ func refreshWhitelist() error {
 	return json.NewDecoder(resp.Body).Decode(&whitelist.m)
 }
 
-func whitelisted(host, urlpath string) bool {
+func whitelisted(r *http.Request) bool {
 	whitelist.RLock()
-	allow := whitelist.m["host"][host]
+	allow := whitelist.m["host"][r.Host]
+	hostM := whitelist.m["host:method"][r.Host+":"+r.Method]
 	paths := whitelist.m["path"]
 	whitelist.RUnlock()
-	if allow {
+	if allow || hostM {
 		return true
 	}
-	p := path.Clean(urlpath)
+	p := path.Clean(r.URL.Path)
 	for ; p != "/"; p = path.Dir(p) {
 		if paths[p] {
 			allow = true

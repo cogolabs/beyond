@@ -19,6 +19,7 @@ var (
 	cookieKey1 = flag.String("cookie-key1", "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u", "keypair 1 for cookie crypto")
 	cookieKey2 = flag.String("cookie-key2", "Q599vrruZRhLFC144thCRZpyHM7qGDjt", "keypair 2 for cookie crypto")
 
+	skipVerify = flag.Bool("insecure-skip-verify", false, "allow TLS backends without valid certificates")
 	wsCompress = flag.Bool("websocket-compression", false, "(gorilla/experimental)")
 
 	store *sessions.CookieStore
@@ -32,12 +33,12 @@ func init() {
 
 	// allow insecure backends
 	http.DefaultTransport = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: *skipVerify},
 	}
 	if websocketproxy.DefaultDialer.TLSClientConfig == nil {
 		websocketproxy.DefaultDialer.TLSClientConfig = &tls.Config{}
 	}
-	websocketproxy.DefaultDialer.TLSClientConfig.InsecureSkipVerify = true
+	websocketproxy.DefaultDialer.TLSClientConfig.InsecureSkipVerify = *skipVerify
 	websocketproxy.DefaultDialer.EnableCompression = *wsCompress
 	websocketproxy.DefaultUpgrader.EnableCompression = *wsCompress
 	websocketproxy.DefaultUpgrader.CheckOrigin = func(r *http.Request) bool {

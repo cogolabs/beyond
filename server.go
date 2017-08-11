@@ -11,16 +11,16 @@ import (
 )
 
 var (
-	bind = flag.String("http", ":80", "")
-	host = flag.String("host", "beyond.colofoo.net", "")
+	bind = flag.String("http", ":80", "listen address")
+	host = flag.String("host", "beyond.colofoo.net", "hostname of self, eg. when generating OAuth redirect URLs")
 
 	cookieAge  = flag.Int("cookie-age", 3600*6, "MaxAge setting in seconds")
-	cookieDom  = flag.String("cookie-domain", ".colofoo.net", "")
-	cookieKey1 = flag.String("cookie-key1", "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u", "keypair 1 for cookie crypto")
-	cookieKey2 = flag.String("cookie-key2", "Q599vrruZRhLFC144thCRZpyHM7qGDjt", "keypair 2 for cookie crypto")
+	cookieDom  = flag.String("cookie-domain", ".colofoo.net", "beyond cookie domain")
+	cookieKey1 = flag.String("cookie-key1", "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u", "key1 of cookie crypto pair")
+	cookieKey2 = flag.String("cookie-key2", "Q599vrruZRhLFC144thCRZpyHM7qGDjt", "key2 of cookie crypto pair")
 
 	skipVerify = flag.Bool("insecure-skip-verify", false, "allow TLS backends without valid certificates")
-	wsCompress = flag.Bool("websocket-compression", false, "(gorilla/experimental)")
+	wsCompress = flag.Bool("websocket-compression", false, "allow websocket transport compression (gorilla/experimental)")
 
 	store *sessions.CookieStore
 )

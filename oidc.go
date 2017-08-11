@@ -11,8 +11,8 @@ import (
 
 var (
 	oidcIssuer       = flag.String("oidc-issuer", "https://yourcompany.onelogin.com/oidc", "issuer URL provided by IdP")
-	oidcClientID     = flag.String("client-id", "f8b8b020-4ec2-0135-6452-027de1ec0c4e43491", "")
-	oidcClientSecret = flag.String("client-secret", "cxLF74XOeRRFDJbKuJpZAOtL4pVPK1t2XGVrDbe5Rx0Uij1LS2e9k7opZI6jQzHC", "")
+	oidcClientID     = flag.String("client-id", "f8b8b020-4ec2-0135-6452-027de1ec0c4e43491", "OIDC client ID")
+	oidcClientSecret = flag.String("client-secret", "cxLF74XOeRRFDJbKuJpZAOtL4pVPK1t2XGVrDbe5Rx0Uij1LS2e9k7opZI6jQzHC", "OIDC client secret")
 
 	oidcConfig   *oauth2.Config
 	oidcProvider *oidc.Provider

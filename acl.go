@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	fenceURL     = flag.String("fence-url", "https://pages.github.com/yourcompany/beyond-config/fence.json", "")
-	sitesURL     = flag.String("sites-url", "https://pages.github.com/yourcompany/beyond-config/sites.json", "")
-	whitelistURL = flag.String("whitelist-url", "https://pages.github.com/yourcompany/beyond-config/whitelist.json", "")
+	fenceURL     = flag.String("fence-url", "https://pages.github.com/yourcompany/beyond-config/fence.json", "URL to user fencing config")
+	sitesURL     = flag.String("sites-url", "https://pages.github.com/yourcompany/beyond-config/sites.json", "URL to allowed sites config")
+	whitelistURL = flag.String("whitelist-url", "https://pages.github.com/yourcompany/beyond-config/whitelist.json", "URL to site whitelist")
 
 	fence     = concurrentMapMapBool{m: map[string]map[string]bool{}}
 	sites     = concurrentMapMapBool{m: map[string]map[string]bool{}}

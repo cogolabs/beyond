@@ -1,0 +1,117 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "jYJ9pZOHhVSOWxdTeSI+nqV7EI8=",
+			"path": "github.com/coreos/go-oidc",
+			"revision": "a4973d9a4225417aecf5d450a9522f00c1f7130f",
+			"revisionTime": "2017-07-11T23:37:13Z"
+		},
+		{
+			"checksumSHA1": "OFu4xJEIjiI8Suu+j/gabfp+y6Q=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
+			"revisionTime": "2017-01-30T11:31:45Z"
+		},
+		{
+			"checksumSHA1": "aUuDJNsM9odzEaaiEaX1CbKAud8=",
+			"path": "github.com/dghubble/sessions",
+			"revision": "26dc61fdb7361714ff41a80a2ad18cbdf8ba1956",
+			"revisionTime": "2016-10-06T20:21:22Z"
+		},
+		{
+			"checksumSHA1": "TG4kmLvhB1sqyaA0dMp9OGAnZQk=",
+			"path": "github.com/drewolson/testflight",
+			"revision": "7040c250b4721006c536587ff8ee8ff573838edb",
+			"revisionTime": "2016-08-16T13:56:44Z"
+		},
+		{
+			"checksumSHA1": "ucTBCc7dDRKLGPsYfAzu/Gq63qA=",
+			"path": "github.com/gorilla/securecookie",
+			"revision": "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983",
+			"revisionTime": "2017-02-24T19:38:04Z"
+		},
+		{
+			"checksumSHA1": "8KawKW6FJguwWz5cPvMg/ChmepE=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "a69d9f6de432e2c6b296a947d8a5ee88f68522cf",
+			"revisionTime": "2017-07-18T20:23:41Z"
+		},
+		{
+			"checksumSHA1": "fRWkKGcsBIXQt6Yd+N/uPmQskE4=",
+			"path": "github.com/koding/websocketproxy",
+			"revision": "7338eeab09f30467d09fd12ae4ad0ccee0121ab1",
+			"revisionTime": "2017-03-29T21:11:15Z"
+		},
+		{
+			"checksumSHA1": "zKKp5SZ3d3ycKe4EKMNT0BqAWBw=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
+			"revisionTime": "2017-01-30T11:31:45Z"
+		},
+		{
+			"checksumSHA1": "KxkAlLxQkuSGHH46Dxu6wpAybO4=",
+			"path": "github.com/pquerna/cachecontrol",
+			"revision": "5475d973ea70916980bee28c2b674f3dc3eaed0a",
+			"revisionTime": "2017-07-06T04:52:24Z"
+		},
+		{
+			"checksumSHA1": "2eVIta46meS/si0XYJT8in44bx0=",
+			"path": "github.com/pquerna/cachecontrol/cacheobject",
+			"revision": "5475d973ea70916980bee28c2b674f3dc3eaed0a",
+			"revisionTime": "2017-07-06T04:52:24Z"
+		},
+		{
+			"checksumSHA1": "JXUVA1jky8ZX8w09p2t5KLs97Nc=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
+			"revisionTime": "2017-01-30T11:31:45Z"
+		},
+		{
+			"checksumSHA1": "dr5+PfIRzXeN+l1VG+s0lea9qz8=",
+			"path": "golang.org/x/net/context",
+			"revision": "02ac38e2528ff4adea90f184d71a3faa04b4b1b0",
+			"revisionTime": "2017-07-18T17:12:47Z"
+		},
+		{
+			"checksumSHA1": "WHc3uByvGaMcnSoI21fhzYgbOgg=",
+			"path": "golang.org/x/net/context/ctxhttp",
+			"revision": "02ac38e2528ff4adea90f184d71a3faa04b4b1b0",
+			"revisionTime": "2017-07-18T17:12:47Z"
+		},
+		{
+			"checksumSHA1": "SjCoL7KD7qBmgSuqGTCAuUhigDk=",
+			"path": "golang.org/x/oauth2",
+			"revision": "cce311a261e6fcf29de72ca96827bdb0b7d9c9e6",
+			"revisionTime": "2017-06-29T19:00:38Z"
+		},
+		{
+			"checksumSHA1": "eztsaK5Uim4juQOtqUf6VF+foD4=",
+			"path": "golang.org/x/oauth2/internal",
+			"revision": "cce311a261e6fcf29de72ca96827bdb0b7d9c9e6",
+			"revisionTime": "2017-06-29T19:00:38Z"
+		},
+		{
+			"checksumSHA1": "kzRhtiKHuEtzVtb6xZZU4N9u0Fc=",
+			"path": "gopkg.in/square/go-jose.v2",
+			"revision": "b25e6cab129e4a54675b42ea49d38e9c33ade9e6",
+			"revisionTime": "2017-06-07T17:41:08Z"
+		},
+		{
+			"checksumSHA1": "j94zYNLTvPSnfnqVKJ4LUf++uX4=",
+			"path": "gopkg.in/square/go-jose.v2/cipher",
+			"revision": "b25e6cab129e4a54675b42ea49d38e9c33ade9e6",
+			"revisionTime": "2017-06-07T17:41:08Z"
+		},
+		{
+			"checksumSHA1": "JFun0lWY9eqd80Js2iWsehu1gc4=",
+			"path": "gopkg.in/square/go-jose.v2/json",
+			"revision": "b25e6cab129e4a54675b42ea49d38e9c33ade9e6",
+			"revisionTime": "2017-06-07T17:41:08Z"
+		}
+	],
+	"rootPath": "github.com/cogolabs/transcend"
+}

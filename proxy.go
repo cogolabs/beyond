@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -13,19 +12,16 @@ var (
 	hostProxy = map[string]*httputil.ReverseProxy{}
 )
 
-func http2ws(r *http.Request) *url.URL {
-	target := "wss://" + r.Host + r.URL.String()
-	next, err := url.Parse(target)
-	if err != nil {
-		log.Printf("%s, parsing: %s", err, target)
-	}
-	return next
+func http2ws(r *http.Request) (*url.URL, error) {
+	target := "wss://" + r.Host + r.URL.RequestURI()
+	return url.Parse(target)
 }
 
-func newWebSocket(r *http.Request) *websocketproxy.WebsocketProxy {
-	p := websocketproxy.NewProxy(http2ws(r))
+func newWebSocket(r *http.Request) (*websocketproxy.WebsocketProxy, error) {
+	ws, err := http2ws(r)
+	p := websocketproxy.NewProxy(ws)
 	p.Director = websocketproxyDirector
-	return p
+	return p, err
 }
 
 func reproxy() error {

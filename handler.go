@@ -25,11 +25,7 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 		session.Save(w)
 
 		next := oidcConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
-		fmt.Fprintf(w, `
-<script type="text/javascript">
-  window.location.replace("%s");
-</script>
-  `, next)
+		jsRedirect(w, next)
 
 	case "/oidc":
 		session, err := store.Get(r, "beyond")
@@ -69,49 +65,57 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		beyond(w, r)
 		return
 	}
+	if whitelisted(r) {
+		nexthop(w, r)
+		return
+	}
 
 	session, err := store.Get(r, "beyond")
 	if err != nil {
 		session = store.New("beyond")
 	}
 	email, _ := session.Values["email"].(string)
-	proxy := hostProxy[r.Host]
+	if email != "" {
+		nexthop(w, r)
+		return
+	}
 
-	// unconfigured
+	login(w, r)
+}
+
+func nexthop(w http.ResponseWriter, r *http.Request) {
+	var proxy http.Handler = hostProxy[r.Host]
+	if r.Header.Get("Upgrade") == "websocket" {
+		proxy, _ = newWebSocket(r)
+	}
+
 	if proxy == nil {
 		setCacheControl(w)
-		w.WriteHeader(404)
-		fmt.Fprintln(w, "unknown URL")
 		return
 	}
+	proxy.ServeHTTP(w, r)
+}
 
-	// allow
-	if email != "" || whitelisted(r) {
-		if r.Header.Get("Upgrade") == "websocket" {
-			newWebSocket(r).ServeHTTP(w, r)
-		} else {
-			proxy.ServeHTTP(w, r)
-		}
-		return
-	}
-
-	// deny
+func login(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
+	w.WriteHeader(401)
 
 	// short-circuit WS+AJAX
 	if r.Header.Get("Upgrade") != "" || r.Header.Get("X-Requested-With") != "" {
-		w.WriteHeader(401)
 		return
 	}
 
-	// interstitial landing to guarantee interactive before cookie save
+	jsRedirect(w, "https://"+*host+"/launch?next="+url.QueryEscape("https://"+r.Host+r.RequestURI))
+}
+
+func jsRedirect(w http.ResponseWriter, next string) {
+	// hack to guarantee interactive session
 	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(401)
 	fmt.Fprintf(w, `
 <script type="text/javascript">
-  window.location.replace("https://%s/launch?next=%s");
+window.location.replace("%s");
 </script>
-  `, *host, url.QueryEscape("https://"+r.Host+r.RequestURI))
+`, next)
 }
 
 func setCacheControl(w http.ResponseWriter) {

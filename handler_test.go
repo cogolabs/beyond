@@ -27,7 +27,7 @@ func TestHandlerGo(t *testing.T) {
 		response := r.Do(request)
 		assert.Equal(t, 401, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
-		assert.Equal(t, "\n<script type=\"text/javascript\">\n  window.location.replace(\"https://beyond.colofoo.net/launch?next=https%3A%2F%2Fgithub.com%2Ftest%3Fa%3D1\");\n</script>\n  ", response.Body)
+		assert.Equal(t, "\n<script type=\"text/javascript\">\nwindow.location.replace(\"https://beyond.colofoo.net/launch?next=https%3A%2F%2Fgithub.com%2Ftest%3Fa%3D1\");\n</script>\n", response.Body)
 	})
 }
 

@@ -15,9 +15,9 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 
 	case "/launch":
-		session, err := store.Get(r, "beyond")
+		session, err := store.Get(r, *cookieName)
 		if err != nil {
-			session = store.New("beyond")
+			session = store.New(*cookieName)
 		}
 		session.Values["next"] = r.FormValue("next")
 		state := randhex32()
@@ -28,7 +28,7 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 		jsRedirect(w, next)
 
 	case "/oidc":
-		session, err := store.Get(r, "beyond")
+		session, err := store.Get(r, *cookieName)
 		if err != nil {
 			w.WriteHeader(400)
 			fmt.Fprintln(w, err.Error())
@@ -70,9 +70,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := store.Get(r, "beyond")
+	session, err := store.Get(r, *cookieName)
 	if err != nil {
-		session = store.New("beyond")
+		session = store.New(*cookieName)
 	}
 	email, _ := session.Values["email"].(string)
 	if email != "" {

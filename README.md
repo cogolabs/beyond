@@ -13,11 +13,13 @@ Usage of ./transcend:
   -cookie-age int
     	MaxAge setting in seconds (default 21600)
   -cookie-domain string
-    	beyond cookie domain (default ".colofoo.net")
+    	session cookie domain (default ".colofoo.net")
   -cookie-key1 string
     	key1 for cookie crypto pair (default "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u")
   -cookie-key2 string
     	key2 of cookie crypto pair (default "Q599vrruZRhLFC144thCRZpyHM7qGDjt")
+  -cookie-name string
+    	session cookie name (default "transcend")
   -fence-url string
     	URL to user fencing config (default "https://pages.github.com/yourcompany/beyond-config/fence.json")
   -host string

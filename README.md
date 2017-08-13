@@ -1,10 +1,21 @@
-# transcend
+[![Build Status](https://travis-ci.org/cogolabs/transcend.svg?branch=master)](https://travis-ci.org/cogolabs/transcend)
+[![Coverage Status](https://img.shields.io/coveralls/cogolabs/transcend.svg)](https://coveralls.io/github/cogolabs/transcend)
+[![Docker Build Status](https://img.shields.io/docker/build/cogolabs/transcend.svg)](https://hub.docker.com/r/cogolabs/transcend/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cogolabs/transcend)](https://goreportcard.com/report/github.com/cogolabs/transcend)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+# transcend
+## Install
+```
+$ docker pull cogolabs/transcend
+```
+or:
+```
+$ go get -u -x github.com/cogolabs/transcend
+```
 ## Usage
 ```
-$ go get -u github.com/cogolabs/transcend
-
-$ transcend -help
+$ docker run --rm -p 80:80 cogolabs/transcend transcend --help
 Usage of ./transcend:
   -client-id string
     	OIDC client ID (default "f8b8b020-4ec2-0135-6452-027de1ec0c4e43491")

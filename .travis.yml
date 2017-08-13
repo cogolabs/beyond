@@ -1,3 +1,7 @@
 language: go
 go: 1.8.x
 install: true
+script:
+  - go test -v -race -coverprofile=.coverprofile
+after_script:
+  - go get github.com/modocache/gover github.com/mattn/goveralls && gover && goveralls -coverprofile=gover.coverprofile

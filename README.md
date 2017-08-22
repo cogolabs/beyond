@@ -5,6 +5,13 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # transcend
+Control access to services beyond your perimeter network. Frequently deployed with split-DNS to alleviate VPN in a zero-trust transition. Inspired by Google BeyondCorp research: https://research.google.com/pubs/pub45728.html
+
+## Features
+- Authenticate users via OpenID Connect
+- External whitelisting via https:your.json
+- WebSocket passthrough
+
 ## Install
 ```
 $ docker pull cogolabs/transcend

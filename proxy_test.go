@@ -9,6 +9,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func init() {
+	hostProxy.Store("test.com", nil)
+}
+
 func TestH2W(t *testing.T) {
 	req, err := http.NewRequest("GET", "/foo?key=bar", nil)
 	assert.NoError(t, err)

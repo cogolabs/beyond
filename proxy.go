@@ -5,12 +5,13 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"sync"
 
 	"github.com/koding/websocketproxy"
 )
 
 var (
-	hostProxy = map[string]*httputil.ReverseProxy{}
+	hostProxy = sync.Map{}
 )
 
 func http2ws(r *http.Request) (*url.URL, error) {
@@ -20,7 +21,10 @@ func http2ws(r *http.Request) (*url.URL, error) {
 
 func nexthop(w http.ResponseWriter, r *http.Request) {
 	var proxy http.Handler
-	proxy, ok := hostProxy[r.Host]
+	v, ok := hostProxy.Load(r.Host)
+	if ok {
+		proxy, ok = v.(*httputil.ReverseProxy)
+	}
 	if !ok {
 		setCacheControl(w)
 		w.WriteHeader(404)
@@ -35,18 +39,31 @@ func nexthop(w http.ResponseWriter, r *http.Request) {
 }
 
 func reproxy() error {
+	cleanup := map[string]bool{}
+	hostProxy.Range(func(key interface{}, value interface{}) bool {
+		if key, ok := key.(string); ok {
+			cleanup[key] = true
+		}
+		return true
+	})
+	var lerr error
 	sites.RLock()
-	defer sites.RUnlock()
 	for _, v := range sites.m {
 		for x := range v {
 			u, err := url.Parse(x)
 			if err != nil {
-				return err
+				lerr = err
+			} else {
+				delete(cleanup, u.Host)
+				hostProxy.Store(u.Host, httputil.NewSingleHostReverseProxy(u))
 			}
-			hostProxy[u.Host] = httputil.NewSingleHostReverseProxy(u)
 		}
 	}
-	return nil
+	sites.RUnlock()
+	for key := range cleanup {
+		hostProxy.Delete(key)
+	}
+	return lerr
 }
 
 func websocketproxyDirector(incoming *http.Request, out http.Header) {

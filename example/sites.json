@@ -31,5 +31,8 @@
     "http://sentry.colofoo.net",
     "http://sentry7.colofoo.net",
     "https://sentry8.colofoo.net"
+  ],
+  "test": [
+    "http://echo.websocket.org"
   ]
 }

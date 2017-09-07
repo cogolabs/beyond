@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -15,6 +16,22 @@ var (
 func http2ws(r *http.Request) (*url.URL, error) {
 	target := "wss://" + r.Host + r.URL.RequestURI()
 	return url.Parse(target)
+}
+
+func nexthop(w http.ResponseWriter, r *http.Request) {
+	var proxy http.Handler
+	proxy, ok := hostProxy[r.Host]
+	if !ok {
+		setCacheControl(w)
+		w.WriteHeader(404)
+		fmt.Fprintln(w, "invalid URL")
+		return
+	}
+
+	if r.Header.Get("Upgrade") == "websocket" {
+		proxy, _ = websocketproxyNew(r)
+	}
+	proxy.ServeHTTP(w, r)
 }
 
 func reproxy() error {

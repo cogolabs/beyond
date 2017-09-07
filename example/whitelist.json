@@ -1,6 +1,7 @@
 {
  "host": {
   "assets.github.com": true,
+  "echo.websocket.org": true,
   "test2.com": true
  },
  "path": {

@@ -82,22 +82,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func nexthop(w http.ResponseWriter, r *http.Request) {
-	var proxy http.Handler
-	proxy, ok := hostProxy[r.Host]
-	if !ok {
-		setCacheControl(w)
-		w.WriteHeader(404)
-		fmt.Fprintln(w, "invalid URL")
-		return
-	}
-
-	if r.Header.Get("Upgrade") == "websocket" {
-		proxy, _ = websocketproxyNew(r)
-	}
-	proxy.ServeHTTP(w, r)
-}
-
 func login(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
 	w.WriteHeader(401)

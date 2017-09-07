@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 
@@ -20,7 +19,7 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 			session = store.New(*cookieName)
 		}
 		session.Values["next"] = r.FormValue("next")
-		state := randhex32()
+		state, _ := randhex32()
 		session.Values["state"] = state
 		session.Save(w)
 
@@ -75,23 +74,26 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		session = store.New(*cookieName)
 	}
 	email, _ := session.Values["email"].(string)
-	if email != "" {
+	switch email {
+	case "":
+		login(w, r)
+	default:
 		nexthop(w, r)
-		return
 	}
-
-	login(w, r)
 }
 
 func nexthop(w http.ResponseWriter, r *http.Request) {
-	var proxy http.Handler = hostProxy[r.Host]
-	if r.Header.Get("Upgrade") == "websocket" {
-		proxy, _ = newWebSocket(r)
+	var proxy http.Handler
+	proxy, ok := hostProxy[r.Host]
+	if !ok {
+		setCacheControl(w)
+		w.WriteHeader(404)
+		fmt.Fprintln(w, "invalid URL")
+		return
 	}
 
-	if proxy == nil {
-		setCacheControl(w)
-		return
+	if r.Header.Get("Upgrade") == "websocket" {
+		proxy, _ = websocketproxyNew(r)
 	}
 	proxy.ServeHTTP(w, r)
 }
@@ -122,11 +124,8 @@ func setCacheControl(w http.ResponseWriter) {
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 }
 
-func randhex32() string {
+func randhex32() (string, error) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
-	if err != nil {
-		log.Println(err)
-	}
-	return fmt.Sprintf("%x", b)
+	return fmt.Sprintf("%x", b), err
 }

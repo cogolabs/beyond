@@ -20,3 +20,12 @@ func TestH2W(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, actual)
 }
+
+func TestWebsocketNew(t *testing.T) {
+	r, err := http.NewRequest("GET", "https://socketio.fire.base", nil)
+	assert.NoError(t, err)
+	p, err := websocketproxyNew(r)
+	assert.NoError(t, err)
+
+	assert.Equal(t, "wss:"+r.URL.String()[6:], p.Backend(r).String())
+}

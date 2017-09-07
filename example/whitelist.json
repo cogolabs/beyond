@@ -1,6 +1,7 @@
 {
  "host": {
-  "assets.github.com": true
+  "assets.github.com": true,
+  "test2.com": true
  },
  "path": {
   "/.well-known/acme-challenge": true

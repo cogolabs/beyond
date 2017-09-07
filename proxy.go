@@ -17,13 +17,6 @@ func http2ws(r *http.Request) (*url.URL, error) {
 	return url.Parse(target)
 }
 
-func newWebSocket(r *http.Request) (*websocketproxy.WebsocketProxy, error) {
-	ws, err := http2ws(r)
-	p := websocketproxy.NewProxy(ws)
-	p.Director = websocketproxyDirector
-	return p, err
-}
-
 func reproxy() error {
 	sites.RLock()
 	defer sites.RUnlock()
@@ -37,4 +30,16 @@ func reproxy() error {
 		}
 	}
 	return nil
+}
+
+func websocketproxyDirector(incoming *http.Request, out http.Header) {
+	out.Set("User-Agent", incoming.UserAgent())
+	out.Set("X-Forwarded-Proto", "https")
+}
+
+func websocketproxyNew(r *http.Request) (*websocketproxy.WebsocketProxy, error) {
+	ws, err := http2ws(r)
+	p := websocketproxy.NewProxy(ws)
+	p.Director = websocketproxyDirector
+	return p, err
 }

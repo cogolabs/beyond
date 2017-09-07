@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/drewolson/testflight"
@@ -42,6 +44,51 @@ func TestHandlerLaunch(t *testing.T) {
 	})
 }
 
+func TestHandlerOidcNoCookie(t *testing.T) {
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/oidc", nil)
+		request.Host = "beyond.colofoo.net"
+		assert.Nil(t, err)
+		response := r.Do(request)
+		assert.Equal(t, 400, response.StatusCode)
+	})
+}
+
+func TestHandlerOidcStateInvalid(t *testing.T) {
+	session := store.New(*cookieName)
+	recorder := httptest.NewRecorder()
+	assert.NoError(t, store.Save(recorder, session))
+	cookie := strings.Split(recorder.Header().Get("Set-Cookie"), ";")[0]
+
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
+		request.Host = "beyond.colofoo.net"
+		request.Header.Set("Cookie", cookie)
+		assert.Nil(t, err)
+		response := r.Do(request)
+		assert.Equal(t, 403, response.StatusCode)
+		assert.Equal(t, "invalid state\n", response.Body)
+	})
+}
+
+func TestHandlerOidcStateValid(t *testing.T) {
+	session := store.New(*cookieName)
+	session.Values["state"] = "test1"
+	recorder := httptest.NewRecorder()
+	assert.NoError(t, store.Save(recorder, session))
+	cookie := strings.Split(recorder.Header().Get("Set-Cookie"), ";")[0]
+
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
+		request.Host = "beyond.colofoo.net"
+		request.Header.Set("Cookie", cookie)
+		assert.Nil(t, err)
+		response := r.Do(request)
+		assert.Equal(t, 400, response.StatusCode)
+		assert.Contains(t, response.Body, "oauth2: cannot fetch token: ")
+	})
+}
+
 func TestHandlerWhitelist(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/favicon.ico", nil)
@@ -61,4 +108,35 @@ func TestHandlerWhitelist(t *testing.T) {
 		assert.NotEqual(t, "", response.Header.Get("Set-Cookie"))
 		assert.Contains(t, response.Body, "Page not found")
 	})
+}
+
+func TestHandlerXHR(t *testing.T) {
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/test?a=1", nil)
+		request.Host = "github.com"
+		request.Header.Set("X-Requested-With", "XMLHttpRequest")
+		assert.Nil(t, err)
+		response := r.Do(request)
+		assert.Equal(t, 401, response.StatusCode)
+		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
+		assert.Equal(t, "", response.Body)
+	})
+}
+
+func TestNexthopInvalid(t *testing.T) {
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/favicon.ico", nil)
+		request.Host = "test2.com"
+		assert.Nil(t, err)
+		response := r.Do(request)
+		assert.Equal(t, 404, response.StatusCode)
+		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
+		assert.Equal(t, "invalid URL\n", response.Body)
+	})
+}
+
+func TestRandhex32(t *testing.T) {
+	h, err := randhex32()
+	assert.Len(t, h, 64)
+	assert.NoError(t, err)
 }

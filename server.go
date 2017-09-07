@@ -47,15 +47,9 @@ func init() {
 	}
 }
 
-func websocketproxyDirector(incoming *http.Request, out http.Header) {
-	out.Set("User-Agent", incoming.UserAgent())
-	out.Set("X-Forwarded-Proto", "https")
-}
-
 func main() {
-	err := setup()
-	if err != nil {
-		log.Fatalln(err)
+	if err := setup(); err != nil {
+		log.Fatal(err)
 	}
 	log.Fatal(http.ListenAndServe(*bind, http.HandlerFunc(handler)))
 }

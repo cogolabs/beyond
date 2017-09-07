@@ -44,7 +44,7 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, err.Error())
 			return
 		}
-		session.Values["email"] = email
+		session.Values["user"] = email
 		next, _ := session.Values["next"].(string)
 		session.Values["next"] = ""
 		session.Values["state"] = ""
@@ -73,8 +73,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		session = store.New(*cookieName)
 	}
-	email, _ := session.Values["email"].(string)
-	switch email {
+
+	user, _ := session.Values["user"].(string)
+	if user == "" {
+		user = tokenAuth(r)
+	}
+
+	switch user {
 	case "":
 		login(w, r)
 	default:

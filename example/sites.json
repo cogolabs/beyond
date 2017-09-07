@@ -33,6 +33,7 @@
     "https://sentry8.colofoo.net"
   ],
   "test": [
-    "http://echo.websocket.org"
+    "http://echo.websocket.org",
+    "http://httpbin.org"
   ]
 }

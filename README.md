@@ -5,12 +5,14 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # transcend
-Control access to services beyond your perimeter network. Frequently deployed with split-DNS to alleviate VPN in a zero-trust transition. Inspired by Google BeyondCorp research: https://research.google.com/pubs/pub45728.html
+Control access to services beyond your perimeter network. Deploy with split-DNS to alleviate VPN in a zero-trust transition. Inspired by Google BeyondCorp research: https://research.google.com/pubs/pub45728.html
 
 ## Features
-- Authenticate users via OpenID Connect
-- External whitelisting via https:your.json
-- WebSocket passthrough
+- Authenticate via:
+  - OpenID Connect
+  - OAuth2 Tokens
+- Automate configuration w/ https:your.json
+- Supports WebSockets
 
 ## Install
 ```
@@ -50,6 +52,8 @@ Usage of ./transcend:
     	issuer URL provided by IdP (default "https://yourcompany.onelogin.com/oidc")
   -sites-url string
     	URL to allowed sites config (default "https://pages.github.com/yourcompany/beyond-config/sites.json")
+  -token-base string
+    	token server URL prefix (eg. https://api.github.com/user?access_token=)
   -websocket-compression
     	allow websocket transport compression (gorilla/experimental)
   -whitelist-url string

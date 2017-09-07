@@ -46,6 +46,12 @@
 			"revisionTime": "2017-03-29T21:11:15Z"
 		},
 		{
+			"checksumSHA1": "JVGDxPn66bpe6xEiexs1r+y6jF0=",
+			"path": "github.com/patrickmn/go-cache",
+			"revision": "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0",
+			"revisionTime": "2017-07-22T04:01:10Z"
+		},
+		{
 			"checksumSHA1": "zKKp5SZ3d3ycKe4EKMNT0BqAWBw=",
 			"origin": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
 			"path": "github.com/pmezard/go-difflib/difflib",

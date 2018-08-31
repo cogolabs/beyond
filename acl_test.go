@@ -15,17 +15,17 @@ func init() {
 }
 
 const (
-	aclErrorBase   = "http://localhost:99"
-	aclErrorString = "Get " + aclErrorBase + ": dial tcp [::1]:99: getsockopt: connection refused"
+	aclErrorBase = "http://localhost:9999"
 )
 
 func TestACL(t *testing.T) {
 	*fenceURL = aclErrorBase
 	*sitesURL = aclErrorBase
 	*whitelistURL = aclErrorBase
-	assert.EqualError(t, refreshFence(), aclErrorString)
-	assert.EqualError(t, refreshSites(), aclErrorString)
-	assert.EqualError(t, refreshWhitelist(), aclErrorString)
+
+	assert.Contains(t, refreshFence().Error(), "connection refused")
+	assert.Contains(t, refreshSites().Error(), "connection refused")
+	assert.Contains(t, refreshWhitelist().Error(), "connection refused")
 
 	cwd, _ := os.Getwd()
 	*fenceURL = "file://" + cwd + "/example/error.json"

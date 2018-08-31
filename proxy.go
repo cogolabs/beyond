@@ -15,20 +15,24 @@ var (
 )
 
 func http2ws(r *http.Request) (*url.URL, error) {
-	target := "wss://" + r.Host + r.URL.RequestURI()
+	target := "wss://" + hostRewrite(r.Host) + r.URL.RequestURI()
 	return url.Parse(target)
 }
 
 func nexthop(w http.ResponseWriter, r *http.Request) {
-	var proxy http.Handler
-	v, ok := hostProxy.Load(r.Host)
+	var (
+		nextHost = hostRewrite(r.Host)
+		proxy    http.Handler
+	)
+
+	v, ok := hostProxy.Load(nextHost)
 	if ok {
 		proxy, ok = v.(*httputil.ReverseProxy)
 	}
 	if !ok && *learnNexthops {
-		proxy = learn(r.Host)
+		proxy = learn(nextHost)
 		if proxy != nil {
-			hostProxy.Store(r.Host, proxy)
+			hostProxy.Store(nextHost, proxy)
 		}
 	}
 

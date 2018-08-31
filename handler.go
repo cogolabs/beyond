@@ -79,17 +79,19 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		user = tokenAuth(r)
 	}
 
-	switch user {
-	case "":
+	// deny
+	if user == "" {
 		login(w, r)
-	default:
-		nexthop(w, r)
+		return
 	}
+
+	// allow
+	nexthop(w, r)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
-	w.WriteHeader(401)
+	w.WriteHeader(*fouroOneCode)
 
 	// short-circuit WS+AJAX
 	if r.Header.Get("Upgrade") != "" || r.Header.Get("X-Requested-With") != "" {

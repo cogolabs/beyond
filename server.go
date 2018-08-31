@@ -20,6 +20,9 @@ var (
 	cookieKey2 = flag.String("cookie-key2", "Q599vrruZRhLFC144thCRZpyHM7qGDjt", "key2 of cookie crypto pair")
 	cookieName = flag.String("cookie-name", "transcend", "session cookie name")
 
+	fouroFourMessage = flag.String("404-message", "Please contact your network administrators to whitelist this system.", "")
+	fouroOneCode     = flag.Int("401-code", 418, "")
+
 	skipVerify = flag.Bool("insecure-skip-verify", false, "allow TLS backends without valid certificates")
 	wsCompress = flag.Bool("websocket-compression", false, "allow websocket transport compression (gorilla/experimental)")
 

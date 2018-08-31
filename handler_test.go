@@ -27,7 +27,7 @@ func TestHandlerGo(t *testing.T) {
 		request.Host = "github.com"
 		assert.Nil(t, err)
 		response := r.Do(request)
-		assert.Equal(t, 401, response.StatusCode)
+		assert.Equal(t, *fouroOneCode, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
 		assert.Equal(t, "\n<script type=\"text/javascript\">\nwindow.location.replace(\"https://beyond.colofoo.net/launch?next=https%3A%2F%2Fgithub.com%2Ftest%3Fa%3D1\");\n</script>\n", response.Body)
 	})
@@ -117,7 +117,7 @@ func TestHandlerXHR(t *testing.T) {
 		request.Header.Set("X-Requested-With", "XMLHttpRequest")
 		assert.Nil(t, err)
 		response := r.Do(request)
-		assert.Equal(t, 401, response.StatusCode)
+		assert.Equal(t, *fouroOneCode, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
 		assert.Equal(t, "", response.Body)
 	})
@@ -131,7 +131,7 @@ func TestNexthopInvalid(t *testing.T) {
 		response := r.Do(request)
 		assert.Equal(t, 404, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
-		assert.Equal(t, "invalid URL\n", response.Body)
+		assert.Equal(t, *fouroFourMessage+"\n", response.Body)
 	})
 }
 

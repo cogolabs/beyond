@@ -27,6 +27,10 @@ $ go get -u -x github.com/cogolabs/transcend
 ```
 $ docker run --rm -p 80:80 cogolabs/transcend transcend --help
 Usage of ./transcend:
+  -401-code int
+    	status to respond when a user needs authentication (default 418)
+  -404-message string
+    	message to use for unlisted hosts when learning is disabled or fails (default "Please contact your network administrators to whitelist this system.")
   -client-id string
     	OIDC client ID (default "f8b8b020-4ec2-0135-6452-027de1ec0c4e43491")
   -client-secret string
@@ -36,7 +40,7 @@ Usage of ./transcend:
   -cookie-domain string
     	session cookie domain (default ".colofoo.net")
   -cookie-key1 string
-    	key1 for cookie crypto pair (default "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u")
+    	key1 of cookie crypto pair (default "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u")
   -cookie-key2 string
     	key2 of cookie crypto pair (default "Q599vrruZRhLFC144thCRZpyHM7qGDjt")
   -cookie-name string
@@ -45,10 +49,18 @@ Usage of ./transcend:
     	URL to user fencing config (default "https://pages.github.com/yourcompany/beyond-config/fence.json")
   -host string
     	hostname of self, eg. when generating OAuth redirect URLs (default "beyond.colofoo.net")
+  -host-masq string
+    	rewrite nexthop hosts (format: from1=to1,from2=to2)
   -http string
     	listen address (default ":80")
   -insecure-skip-verify
     	allow TLS backends without valid certificates
+  -learn-http-ports string
+    	after HTTPS, try these HTTP ports (csv) (default "80,8080,6000,6060,7000,8000,9000,9200,15672")
+  -learn-https-ports string
+    	try learning these backend HTTPS ports (csv) (default "443,4443,8443,9443")
+  -learn-nexthops
+    	set false to require explicit whitelisting (default true)
   -oidc-issuer string
     	issuer URL provided by IdP (default "https://yourcompany.onelogin.com/oidc")
   -sites-url string

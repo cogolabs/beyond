@@ -21,22 +21,22 @@ func http2ws(r *http.Request) (*url.URL, error) {
 
 func nexthop(w http.ResponseWriter, r *http.Request) {
 	var (
-		nextHost = hostRewrite(r.Host)
-		proxy    http.Handler
+		nextHost  = hostRewrite(r.Host)
+		nextProxy http.Handler
 	)
 
 	v, ok := hostProxy.Load(nextHost)
 	if ok {
-		proxy, ok = v.(*httputil.ReverseProxy)
+		nextProxy, ok = v.(*httputil.ReverseProxy)
 	}
 	if !ok && *learnNexthops {
-		proxy = learn(nextHost)
-		if proxy != nil {
-			hostProxy.Store(nextHost, proxy)
+		nextProxy = learn(nextHost)
+		if nextProxy != nil {
+			hostProxy.Store(nextHost, nextProxy)
 		}
 	}
 
-	if !ok || proxy == nil {
+	if !ok || nextProxy == nil {
 		// unconfigured
 		setCacheControl(w)
 		w.WriteHeader(404)
@@ -45,9 +45,9 @@ func nexthop(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Header.Get("Upgrade") == "websocket" {
-		proxy, _ = websocketproxyNew(r)
+		nextProxy, _ = websocketproxyNew(r)
 	}
-	proxy.ServeHTTP(w, r)
+	nextProxy.ServeHTTP(w, r)
 }
 
 func reproxy() error {

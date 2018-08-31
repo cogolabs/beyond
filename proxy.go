@@ -25,10 +25,18 @@ func nexthop(w http.ResponseWriter, r *http.Request) {
 	if ok {
 		proxy, ok = v.(*httputil.ReverseProxy)
 	}
-	if !ok {
+	if !ok && *learnNexthops {
+		proxy = learn(r.Host)
+		if proxy != nil {
+			hostProxy.Store(r.Host, proxy)
+		}
+	}
+
+	if !ok || proxy == nil {
+		// unconfigured
 		setCacheControl(w)
 		w.WriteHeader(404)
-		fmt.Fprintln(w, "invalid URL")
+		fmt.Fprintln(w, *fouroFourMessage)
 		return
 	}
 

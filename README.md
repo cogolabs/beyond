@@ -12,6 +12,7 @@ Control access to services beyond your perimeter network. Deploy with split-DNS 
   - OpenID Connect
   - OAuth2 Tokens
 - Automate configuration w/ https:your.json
+- Nexthop Learning (via Favorite Ports: 443, 80, ...)
 - Supports WebSockets
 
 ## Install

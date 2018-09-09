@@ -46,7 +46,7 @@ Usage of ./transcend:
   -cookie-name string
     	session cookie name (default "transcend")
   -fence-url string
-    	URL to user fencing config (default "https://pages.github.com/yourcompany/beyond-config/fence.json")
+    	URL to user fencing config (eg. https://pages.github.com/yourcompany/beyond-config/fence.json)
   -host string
     	hostname of self, eg. when generating OAuth redirect URLs (default "beyond.colofoo.net")
   -host-masq string
@@ -55,6 +55,8 @@ Usage of ./transcend:
     	listen address (default ":80")
   -insecure-skip-verify
     	allow TLS backends without valid certificates
+  -learn-dial-timeout duration
+    	skip port after this connection timeout (default 5s)
   -learn-http-ports string
     	after HTTPS, try these HTTP ports (csv) (default "80,8080,6000,6060,7000,8000,9000,9200,15672")
   -learn-https-ports string
@@ -64,11 +66,11 @@ Usage of ./transcend:
   -oidc-issuer string
     	issuer URL provided by IdP (default "https://yourcompany.onelogin.com/oidc")
   -sites-url string
-    	URL to allowed sites config (default "https://pages.github.com/yourcompany/beyond-config/sites.json")
+    	URL to allowed sites config (eg. https://pages.github.com/yourcompany/beyond-config/sites.json)
   -token-base string
     	token server URL prefix (eg. https://api.github.com/user?access_token=)
   -websocket-compression
     	allow websocket transport compression (gorilla/experimental)
   -whitelist-url string
-    	URL to site whitelist (default "https://pages.github.com/yourcompany/beyond-config/whitelist.json")
+    	URL to site whitelist (eg. https://pages.github.com/yourcompany/beyond-config/whitelist.json)
 ```

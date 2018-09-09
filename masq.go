@@ -11,16 +11,18 @@ var (
 )
 
 func init() {
-	if *hostMasq != "" {
-		hostMasqSetup(*hostMasq)
-	}
+	hostMasqSetup(*hostMasq)
 }
 
-func hostMasqSetup(cfg string) {
+func hostMasqSetup(cfg string) error {
+	if cfg == "" {
+		return nil
+	}
 	for _, line := range strings.Split(cfg, ",") {
 		elts := strings.Split(line, "=")
 		hostMasqMap[elts[0]] = elts[1]
 	}
+	return nil
 }
 
 func hostRewrite(host string) string {

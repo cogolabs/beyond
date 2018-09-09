@@ -6,6 +6,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var (
@@ -13,6 +14,8 @@ var (
 
 	learnHTTPSPorts = flag.String("learn-https-ports", "443,4443,8443,9443", "try learning these backend HTTPS ports (csv)")
 	learnHTTPPorts  = flag.String("learn-http-ports", "80,8080,6000,6060,7000,8000,9000,9200,15672", "after HTTPS, try these HTTP ports (csv)")
+
+	learnDialTimeout = flag.Duration("learn-dial-timeout", 5*time.Second, "skip port after this connection timeout")
 )
 
 func learn(host string) *httputil.ReverseProxy {
@@ -29,7 +32,7 @@ func learn(host string) *httputil.ReverseProxy {
 
 func learnHostScheme(hostname string) string {
 	for _, httpsPort := range strings.Split(*learnHTTPSPorts, ",") {
-		c, err := net.Dial("tcp", hostname+":"+httpsPort)
+		c, err := net.DialTimeout("tcp", hostname+":"+httpsPort, *learnDialTimeout)
 		if err == nil {
 			c.Close()
 			if httpsPort == "443" {
@@ -39,7 +42,7 @@ func learnHostScheme(hostname string) string {
 		}
 	}
 	for _, httpPort := range strings.Split(*learnHTTPPorts, ",") {
-		c, err := net.Dial("tcp", hostname+":"+httpPort)
+		c, err := net.DialTimeout("tcp", hostname+":"+httpPort, *learnDialTimeout)
 		if err == nil {
 			c.Close()
 			if httpPort == "80" {

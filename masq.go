@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"strings"
 )
 
@@ -20,6 +21,9 @@ func hostMasqSetup(cfg string) error {
 	}
 	for _, line := range strings.Split(cfg, ",") {
 		elts := strings.Split(line, "=")
+		if len(elts) < 2 {
+			return fmt.Errorf("missing equals assigment in: %+v", line)
+		}
 		hostMasqMap[elts[0]] = elts[1]
 	}
 	return nil

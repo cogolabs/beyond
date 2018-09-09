@@ -26,6 +26,10 @@ type concurrentMapMapBool struct {
 }
 
 func refreshFence() error {
+	if *fenceURL == "" {
+		return nil
+	}
+
 	resp, err := httpACL.Get(*fenceURL)
 	if err != nil {
 		return err
@@ -48,6 +52,10 @@ func refreshFence() error {
 }
 
 func refreshSites() error {
+	if *sitesURL == "" {
+		return nil
+	}
+
 	resp, err := httpACL.Get(*sitesURL)
 	if err != nil {
 		return err
@@ -72,6 +80,10 @@ func refreshSites() error {
 }
 
 func refreshWhitelist() error {
+	if *whitelistURL == "" {
+		return nil
+	}
+
 	resp, err := httpACL.Get(*whitelistURL)
 	if err != nil {
 		return err

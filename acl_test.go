@@ -19,6 +19,14 @@ const (
 )
 
 func TestACL(t *testing.T) {
+	*fenceURL = ""
+	*sitesURL = ""
+	*whitelistURL = ""
+
+	assert.NoError(t, refreshFence())
+	assert.NoError(t, refreshSites())
+	assert.NoError(t, refreshWhitelist())
+
 	*fenceURL = aclErrorBase
 	*sitesURL = aclErrorBase
 	*whitelistURL = aclErrorBase

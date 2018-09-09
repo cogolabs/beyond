@@ -30,7 +30,6 @@ var (
 )
 
 func init() {
-	flag.Parse()
 	store = sessions.NewCookieStore([]byte(*cookieKey1), []byte(*cookieKey2))
 	store.Config.Domain = *cookieDom
 	store.Config.MaxAge = *cookieAge

@@ -2,6 +2,6 @@ language: go
 go: 1.11.x
 install: true
 script:
-  - go test -v -race -coverprofile=.coverprofile
+  - go test -v -race -coverprofile=coverage.txt -covermode=atomic
 after_script:
-  - go get github.com/modocache/gover github.com/mattn/goveralls && gover && goveralls -coverprofile=gover.coverprofile
+  - bash <(curl -s https://codecov.io/bash)

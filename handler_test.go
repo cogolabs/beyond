@@ -24,8 +24,8 @@ func TestHandlerPing(t *testing.T) {
 func TestHandlerGo(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/test?a=1", nil)
-		request.Host = "github.com"
 		assert.Nil(t, err)
+		request.Host = "github.com"
 		response := r.Do(request)
 		assert.Equal(t, *fouroOneCode, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
@@ -36,8 +36,8 @@ func TestHandlerGo(t *testing.T) {
 func TestHandlerLaunch(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/launch?next=https%3A%2F%2Falachart.colofoo.net%2Ftest%3Fa%3D1", nil)
-		request.Host = "beyond.colofoo.net"
 		assert.Nil(t, err)
+		request.Host = "beyond.colofoo.net"
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
 		assert.NotEqual(t, "", response.Header.Get("Set-Cookie"))
@@ -47,8 +47,8 @@ func TestHandlerLaunch(t *testing.T) {
 func TestHandlerOidcNoCookie(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc", nil)
-		request.Host = "beyond.colofoo.net"
 		assert.Nil(t, err)
+		request.Host = "beyond.colofoo.net"
 		response := r.Do(request)
 		assert.Equal(t, 400, response.StatusCode)
 	})
@@ -62,9 +62,9 @@ func TestHandlerOidcStateInvalid(t *testing.T) {
 
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
+		assert.Nil(t, err)
 		request.Host = "beyond.colofoo.net"
 		request.Header.Set("Cookie", cookie)
-		assert.Nil(t, err)
 		response := r.Do(request)
 		assert.Equal(t, 403, response.StatusCode)
 		assert.Equal(t, "invalid state\n", response.Body)
@@ -80,9 +80,9 @@ func TestHandlerOidcStateValid(t *testing.T) {
 
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
+		assert.Nil(t, err)
 		request.Host = "beyond.colofoo.net"
 		request.Header.Set("Cookie", cookie)
-		assert.Nil(t, err)
 		response := r.Do(request)
 		assert.Equal(t, 400, response.StatusCode)
 		assert.Contains(t, response.Body, "oauth2: cannot fetch token: ")
@@ -92,8 +92,8 @@ func TestHandlerOidcStateValid(t *testing.T) {
 func TestHandlerWhitelist(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/favicon.ico", nil)
-		request.Host = "assets.github.com"
 		assert.Nil(t, err)
+		request.Host = "assets.github.com"
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
@@ -101,8 +101,8 @@ func TestHandlerWhitelist(t *testing.T) {
 	})
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/.well-known/acme-challenge/test", nil)
-		request.Host = "github.com"
 		assert.Nil(t, err)
+		request.Host = "github.com"
 		response := r.Do(request)
 		assert.Equal(t, 404, response.StatusCode)
 		assert.NotEqual(t, "", response.Header.Get("Set-Cookie"))
@@ -113,9 +113,9 @@ func TestHandlerWhitelist(t *testing.T) {
 func TestHandlerXHR(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/test?a=1", nil)
+		assert.Nil(t, err)
 		request.Host = "github.com"
 		request.Header.Set("X-Requested-With", "XMLHttpRequest")
-		assert.Nil(t, err)
 		response := r.Do(request)
 		assert.Equal(t, *fouroOneCode, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
@@ -126,8 +126,8 @@ func TestHandlerXHR(t *testing.T) {
 func TestNexthopInvalid(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/favicon.ico", nil)
-		request.Host = "test2.com"
 		assert.Nil(t, err)
+		request.Host = "test2.com"
 		response := r.Do(request)
 		assert.Equal(t, 404, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))

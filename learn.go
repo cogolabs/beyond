@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"net"
+	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
@@ -18,7 +19,7 @@ var (
 	learnDialTimeout = flag.Duration("learn-dial-timeout", 5*time.Second, "skip port after this connection timeout")
 )
 
-func learn(host string) *httputil.ReverseProxy {
+func learn(host string) http.Handler {
 	newbase := learnHostScheme(host)
 	if newbase == "" {
 		return nil

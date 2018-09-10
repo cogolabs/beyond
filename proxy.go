@@ -33,6 +33,7 @@ func nexthop(w http.ResponseWriter, r *http.Request) {
 		nextProxy = learn(nextHost)
 		if nextProxy != nil {
 			hostProxy.Store(nextHost, nextProxy)
+			ok = true
 		}
 	}
 

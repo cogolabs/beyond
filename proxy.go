@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -39,9 +38,7 @@ func nexthop(w http.ResponseWriter, r *http.Request) {
 
 	if !ok || nextProxy == nil {
 		// unconfigured
-		setCacheControl(w)
-		w.WriteHeader(404)
-		fmt.Fprintln(w, *fouroFourMessage)
+		errorHandler(w, 404, *fouroFourMessage)
 		return
 	}
 

@@ -67,7 +67,7 @@ func TestHandlerOidcStateInvalid(t *testing.T) {
 		request.Header.Set("Cookie", cookie)
 		response := r.Do(request)
 		assert.Equal(t, 403, response.StatusCode)
-		assert.Equal(t, "invalid state\n", response.Body)
+		assert.Contains(t, response.Body, "Invalid Browser State")
 	})
 }
 
@@ -131,7 +131,7 @@ func TestNexthopInvalid(t *testing.T) {
 		response := r.Do(request)
 		assert.Equal(t, 404, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
-		assert.Equal(t, *fouroFourMessage+"\n", response.Body)
+		assert.Contains(t, response.Body, *fouroFourMessage)
 	})
 }
 

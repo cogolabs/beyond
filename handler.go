@@ -11,6 +11,12 @@ import (
 
 func beyond(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
+
+	if r.FormValue("error") != "" {
+		errorQuery(w, r)
+		return
+	}
+
 	switch r.URL.Path {
 
 	case "/launch":
@@ -29,19 +35,16 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 	case "/oidc":
 		session, err := store.Get(r, *cookieName)
 		if err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintln(w, err.Error())
+			errorHandler(w, 400, err.Error())
 			return
 		}
 		if state, ok := session.Values["state"].(string); !ok || state != r.FormValue("state") {
-			w.WriteHeader(403)
-			fmt.Fprintln(w, "invalid state")
+			errorHandler(w, 403, "Invalid Browser State")
 			return
 		}
 		email, err := oidcVerify(r.FormValue("code"))
 		if err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintln(w, err.Error())
+			errorHandler(w, 400, err.Error())
 			return
 		}
 		session.Values["user"] = email

@@ -29,7 +29,7 @@ func TestHandlerGo(t *testing.T) {
 		response := r.Do(request)
 		assert.Equal(t, *fouroOneCode, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
-		assert.Equal(t, "\n<script type=\"text/javascript\">\nwindow.location.replace(\"https://beyond.colofoo.net/launch?next=https%3A%2F%2Fgithub.com%2Ftest%3Fa%3D1\");\n</script>\n", response.Body)
+		assert.Equal(t, "\n<script type=\"text/javascript\">\nwindow.location.replace(\"https://"+*host+"/launch?next=https%3A%2F%2Fgithub.com%2Ftest%3Fa%3D1\");\n</script>\n", response.Body)
 	})
 }
 
@@ -37,7 +37,7 @@ func TestHandlerLaunch(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/launch?next=https%3A%2F%2Falachart.colofoo.net%2Ftest%3Fa%3D1", nil)
 		assert.Nil(t, err)
-		request.Host = "beyond.colofoo.net"
+		request.Host = *host
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
 		assert.NotEqual(t, "", response.Header.Get("Set-Cookie"))
@@ -48,7 +48,7 @@ func TestHandlerOidcNoCookie(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc", nil)
 		assert.Nil(t, err)
-		request.Host = "beyond.colofoo.net"
+		request.Host = *host
 		response := r.Do(request)
 		assert.Equal(t, 400, response.StatusCode)
 	})
@@ -63,7 +63,7 @@ func TestHandlerOidcStateInvalid(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
 		assert.Nil(t, err)
-		request.Host = "beyond.colofoo.net"
+		request.Host = *host
 		request.Header.Set("Cookie", cookie)
 		response := r.Do(request)
 		assert.Equal(t, 403, response.StatusCode)
@@ -81,7 +81,7 @@ func TestHandlerOidcStateValid(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
 		assert.Nil(t, err)
-		request.Host = "beyond.colofoo.net"
+		request.Host = *host
 		request.Header.Set("Cookie", cookie)
 		response := r.Do(request)
 		assert.Equal(t, 400, response.StatusCode)

@@ -44,6 +44,21 @@ func TestTokenError(t *testing.T) {
 	assert.Equal(t, "", tokenAuth(r))
 }
 
+func TestTokenBasic(t *testing.T) {
+	r, err := http.NewRequest("GET", "/", nil)
+	assert.NoError(t, err)
+
+	r.SetBasicAuth(tokenTestToken, "x-oauth-basic")
+	login1 := tokenAuth(r)
+	r.SetBasicAuth("", tokenTestToken)
+	login2 := tokenAuth(r)
+	assert.Equal(t, "user1", login1)
+	assert.Equal(t, "user1", login2)
+
+	r.SetBasicAuth(tokenTestToken, "foobar")
+	assert.Equal(t, "", tokenAuth(r))
+}
+
 func TestTokenFederation(t *testing.T) {
 	r, err := http.NewRequest("GET", "/", nil)
 	assert.NoError(t, err)

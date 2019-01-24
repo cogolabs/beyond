@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/patrickmn/go-cache"
+	cache "github.com/patrickmn/go-cache"
 )
 
 var (
@@ -22,12 +22,18 @@ func tokenAuth(r *http.Request) string {
 		return ""
 	}
 
-	token := ""
-	parts := strings.Split(r.Header.Get("Authorization"), " ")
-	if len(parts) > 1 {
-		if strings.ToLower(parts[0]) == "token" {
+	u, token, _ := r.BasicAuth()
+	if token == "x-oauth-basic" || token == "" {
+		token = u
+	}
+	if token == "" {
+		parts := strings.Split(r.Header.Get("Authorization"), " ")
+		if len(parts) > 1 && strings.ToLower(parts[0]) == "token" {
 			token = parts[1]
 		}
+	}
+	if token == "" {
+		r.FormValue("access_token")
 	}
 	if token == "" {
 		return ""

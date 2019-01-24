@@ -83,4 +83,13 @@ func TestTokenSuccess(t *testing.T) {
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "{\n  \"origin\"", strings.Split(response.Body, ":")[0])
 	})
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/ip", nil)
+		assert.Nil(t, err)
+		request.SetBasicAuth(tokenTestLogin, tokenTestToken)
+		request.Host = "httpbin.org"
+		response := r.Do(request)
+		assert.Equal(t, 200, response.StatusCode)
+		assert.Equal(t, "{\n  \"origin\"", strings.Split(response.Body, ":")[0])
+	})
 }

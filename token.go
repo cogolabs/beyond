@@ -22,8 +22,8 @@ func tokenAuth(r *http.Request) string {
 		return ""
 	}
 
-	u, token, _ := r.BasicAuth()
-	if token == "x-oauth-basic" || token == "" {
+	u, token, ok := r.BasicAuth()
+	if ok && (token == "x-oauth-basic" || token == "") {
 		token = u
 	}
 	if token == "" {
@@ -33,7 +33,7 @@ func tokenAuth(r *http.Request) string {
 		}
 	}
 	if token == "" {
-		r.FormValue("access_token")
+		token = r.FormValue("access_token")
 	}
 	if token == "" {
 		return ""

@@ -28,6 +28,9 @@ func TestH2W(t *testing.T) {
 }
 
 func TestWebsocketEcho(t *testing.T) {
+	// echo.websocket.org offline as of 2019/01/29
+	t.SkipNow()
+
 	server := httptest.NewServer(http.HandlerFunc(nexthop))
 	defer server.Close()
 
@@ -42,7 +45,7 @@ func TestWebsocketEcho(t *testing.T) {
 }
 
 func TestWebsocketNew(t *testing.T) {
-	r, err := http.NewRequest("GET", "https://socketio.fire.base", nil)
+	r, err := http.NewRequest("GET", "https://demos.kaazing.com/echo", nil)
 	assert.NoError(t, err)
 	p, err := websocketproxyNew(r)
 	assert.NoError(t, err)

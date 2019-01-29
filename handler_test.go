@@ -14,10 +14,11 @@ var h = http.HandlerFunc(handler)
 
 func TestHandlerPing(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
-		request, err := http.NewRequest("GET", "/ping", nil)
+		request, err := http.NewRequest("GET", *healthPath, nil)
 		assert.Nil(t, err)
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
+		assert.Equal(t, *healthReply, response.Body)
 	})
 }
 

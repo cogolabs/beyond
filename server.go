@@ -14,6 +14,9 @@ var (
 	bind = flag.String("http", ":80", "listen address")
 	host = flag.String("host", "beyond.colofoo.net", "hostname of self, eg. when generating OAuth redirect URLs")
 
+	healthPath  = flag.String("health-path", "/healthz/ping", "URL of the health endpoint")
+	healthReply = flag.String("health-reply", "ok", "response body of the health endpoint")
+
 	cookieAge  = flag.Int("cookie-age", 3600*6, "MaxAge setting in seconds")
 	cookieDom  = flag.String("cookie-domain", ".colofoo.net", "session cookie domain")
 	cookieKey1 = flag.String("cookie-key1", "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u", "key1 of cookie crypto pair")

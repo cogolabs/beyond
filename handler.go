@@ -59,8 +59,8 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/ping" {
-		fmt.Fprintln(w, "OK")
+	if r.URL.Path == *healthPath {
+		fmt.Fprint(w, *healthReply)
 		return
 	}
 	if r.Host == *host {

@@ -15,6 +15,11 @@ var (
 	tokenBase = flag.String("token-base", "", "token server URL prefix (eg. https://api.github.com/user?access_token=)")
 
 	tokenCache = cache.New(10*time.Minute, 10*time.Minute)
+
+	tokenTypes = map[string]bool{
+		"bearer": true,
+		"token":  true,
+	}
 )
 
 func tokenAuth(r *http.Request) string {
@@ -28,7 +33,7 @@ func tokenAuth(r *http.Request) string {
 	}
 	if token == "" {
 		parts := strings.Split(r.Header.Get("Authorization"), " ")
-		if len(parts) > 1 && strings.ToLower(parts[0]) == "token" {
+		if len(parts) > 1 && tokenTypes[strings.ToLower(parts[0])] {
 			token = parts[1]
 		}
 	}

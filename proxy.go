@@ -87,3 +87,7 @@ func websocketproxyNew(r *http.Request) (*websocketproxy.WebsocketProxy, error) 
 	p.Director = websocketproxyDirector
 	return p, err
 }
+
+func websocketproxyCheckOrigin(r *http.Request) bool {
+	return true
+}

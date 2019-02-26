@@ -33,23 +33,26 @@ var (
 )
 
 func init() {
+	// setup encrypted cookies
 	store = sessions.NewCookieStore([]byte(*cookieKey1), []byte(*cookieKey2))
 	store.Config.Domain = *cookieDom
 	store.Config.MaxAge = *cookieAge
 
-	// allow insecure backends
+	// setup backend encryption
 	http.DefaultTransport = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: *skipVerify},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: *skipVerify,
+		},
 	}
+
+	// setup websockets
 	if websocketproxy.DefaultDialer.TLSClientConfig == nil {
 		websocketproxy.DefaultDialer.TLSClientConfig = &tls.Config{}
 	}
 	websocketproxy.DefaultDialer.TLSClientConfig.InsecureSkipVerify = *skipVerify
 	websocketproxy.DefaultDialer.EnableCompression = *wsCompress
 	websocketproxy.DefaultUpgrader.EnableCompression = *wsCompress
-	websocketproxy.DefaultUpgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}
+	websocketproxy.DefaultUpgrader.CheckOrigin = websocketproxyCheckOrigin
 }
 
 func main() {

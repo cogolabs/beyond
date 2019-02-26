@@ -47,6 +47,8 @@ func TestWebsocketEcho(t *testing.T) {
 func TestWebsocketNew(t *testing.T) {
 	r, err := http.NewRequest("GET", "https://demos.kaazing.com/echo", nil)
 	assert.NoError(t, err)
+	assert.True(t, websocketproxyCheckOrigin(r))
+
 	p, err := websocketproxyNew(r)
 	assert.NoError(t, err)
 

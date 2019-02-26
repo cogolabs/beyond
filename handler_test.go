@@ -92,13 +92,13 @@ func TestHandlerOidcStateValid(t *testing.T) {
 
 func TestHandlerWhitelist(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
-		request, err := http.NewRequest("GET", "/favicon.ico", nil)
+		request, err := http.NewRequest("GET", "/", nil)
 		assert.Nil(t, err)
-		request.Host = "assets.github.com"
+		request.Host = "github.githubassets.com"
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
-		assert.Equal(t, []byte{00, 00, 01, 00, 2, 0, 0x10, 0x10, 0, 0}, response.RawBody[:10])
+		assert.Equal(t, "Welcome", string(response.RawBody[:7]))
 	})
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/.well-known/acme-challenge/test", nil)

@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.org/cogolabs/transcend.svg?branch=master)](https://travis-ci.org/cogolabs/transcend)
-[![codecov](https://codecov.io/gh/cogolabs/transcend/branch/master/graph/badge.svg)](https://codecov.io/gh/cogolabs/transcend)
-[![Docker Build Status](https://img.shields.io/docker/build/cogolabs/transcend.svg)](https://hub.docker.com/r/cogolabs/transcend/)
-[![Go Report Card](https://goreportcard.com/badge/github.com/cogolabs/transcend)](https://goreportcard.com/report/github.com/cogolabs/transcend)
+[![Build Status](https://travis-ci.org/cogolabs/beyond.svg?branch=master)](https://travis-ci.org/cogolabs/beyond)
+[![codecov](https://codecov.io/gh/cogolabs/beyond/branch/master/graph/badge.svg)](https://codecov.io/gh/cogolabs/beyond)
+[![Docker Build Status](https://img.shields.io/docker/build/cogolabs/beyond.svg)](https://hub.docker.com/r/cogolabs/beyond/)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cogolabs/beyond)](https://goreportcard.com/report/github.com/cogolabs/beyond)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-# transcend
+# beyond
 Control access to services beyond your perimeter network. Deploy with split-DNS to alleviate VPN in a zero-trust transition. Inspired by Google BeyondCorp research: https://research.google.com/pubs/pub45728.html
 
 ## Features
@@ -17,16 +17,16 @@ Control access to services beyond your perimeter network. Deploy with split-DNS 
 
 ## Install
 ```
-$ docker pull cogolabs/transcend
+$ docker pull cogolabs/beyond
 ```
 or:
 ```
-$ go get -u -x github.com/cogolabs/transcend
+$ go get -u -x github.com/cogolabs/beyond
 ```
 ## Usage
 ```
-$ docker run --rm -p 80:80 cogolabs/transcend transcend --help
-Usage of ./transcend:
+$ docker run --rm -p 80:80 cogolabs/beyond beyond --help
+Usage of ./beyond:
   -401-code int
     	status to respond when a user needs authentication (default 418)
   -404-message string
@@ -44,7 +44,7 @@ Usage of ./transcend:
   -cookie-key2 string
     	key2 of cookie crypto pair (default "Q599vrruZRhLFC144thCRZpyHM7qGDjt")
   -cookie-name string
-    	session cookie name (default "transcend")
+    	session cookie name (default "beyond")
   -fence-url string
     	URL to user fencing config (eg. https://pages.github.com/yourcompany/beyond-config/fence.json)
   -host string

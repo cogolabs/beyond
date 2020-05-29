@@ -1,4 +1,4 @@
-package main
+package beyond
 
 import (
 	"net/http"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var h = http.HandlerFunc(handler)
+var h = http.HandlerFunc(Handler)
 
 func TestHandlerPing(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {

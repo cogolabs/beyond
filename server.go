@@ -1,9 +1,8 @@
-package main
+package beyond
 
 import (
 	"crypto/tls"
 	"flag"
-	"log"
 	"net/http"
 
 	"github.com/dghubble/sessions"
@@ -11,7 +10,6 @@ import (
 )
 
 var (
-	bind = flag.String("http", ":80", "listen address")
 	host = flag.String("host", "beyond.colofoo.net", "hostname of self, eg. when generating OAuth redirect URLs")
 
 	healthPath  = flag.String("health-path", "/healthz/ping", "URL of the health endpoint")
@@ -55,15 +53,11 @@ func init() {
 	websocketproxy.DefaultUpgrader.CheckOrigin = websocketproxyCheckOrigin
 }
 
-func main() {
-	if err := setup(); err != nil {
-		log.Fatal(err)
+func Setup() error {
+	err := hostMasqSetup(*hostMasq)
+	if err == nil {
+		err = oidcSetup()
 	}
-	log.Fatal(http.ListenAndServe(*bind, http.HandlerFunc(handler)))
-}
-
-func setup() error {
-	err := oidcSetup()
 	if err == nil {
 		err = refreshFence()
 	}

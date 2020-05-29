@@ -25,8 +25,8 @@ $ go get -u -x github.com/cogolabs/beyond
 ```
 ## Usage
 ```
-$ docker run --rm -p 80:80 cogolabs/beyond beyond --help
-Usage of ./beyond:
+$ docker run --rm -p 80:80 cogolabs/beyond httpd --help
+Usage of ./httpd:
   -401-code int
     	status to respond when a user needs authentication (default 418)
   -404-message string

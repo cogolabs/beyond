@@ -1,15 +1,12 @@
-package main
+package beyond
 
 import (
-	"flag"
 	"log"
 	"net"
 	"time"
 )
 
 func init() {
-	flag.Parse()
-
 	// prepend file:lineno
 	log.SetFlags(log.Flags() | log.Lshortfile)
 

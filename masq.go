@@ -1,4 +1,4 @@
-package main
+package beyond
 
 import (
 	"flag"
@@ -10,10 +10,6 @@ var (
 	hostMasq    = flag.String("host-masq", "", "rewrite nexthop hosts (format: from1=to1,from2=to2)")
 	hostMasqMap = map[string]string{}
 )
-
-func init() {
-	hostMasqSetup(*hostMasq)
-}
 
 func hostMasqSetup(cfg string) error {
 	if cfg == "" {

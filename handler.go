@@ -1,4 +1,4 @@
-package main
+package beyond
 
 import (
 	"crypto/rand"
@@ -58,7 +58,7 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == *healthPath {
 		fmt.Fprint(w, *healthReply)
 		return

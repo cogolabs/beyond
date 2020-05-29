@@ -1,4 +1,4 @@
-package main
+package beyond
 
 import (
 	"context"
@@ -15,7 +15,6 @@ var (
 	oidcClientSecret = flag.String("client-secret", "cxLF74XOeRRFDJbKuJpZAOtL4pVPK1t2XGVrDbe5Rx0Uij1LS2e9k7opZI6jQzHC", "OIDC client secret")
 
 	oidcConfig   *oauth2.Config
-	oidcProvider *oidc.Provider
 	oidcVerifier *oidc.IDTokenVerifier
 )
 
@@ -42,7 +41,6 @@ func oidcSetup() error {
 	oidcVerifier = provider.Verifier(&oidc.Config{
 		ClientID: oauth2Config.ClientID,
 	})
-	oidcProvider = provider
 	oidcConfig = oauth2Config
 	return nil
 }

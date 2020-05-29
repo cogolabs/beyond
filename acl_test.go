@@ -1,4 +1,4 @@
-package main
+package beyond
 
 import (
 	"net/http"
@@ -46,7 +46,7 @@ func TestACL(t *testing.T) {
 	*fenceURL = "file://" + cwd + "/example/fence.json"
 	*sitesURL = "file://" + cwd + "/example/sites.json"
 	*whitelistURL = "file://" + cwd + "/example/whitelist.json"
-	assert.NoError(t, setup())
+	assert.NoError(t, Setup())
 
 	assert.NotEmpty(t, fence.m)
 	assert.NotEmpty(t, sites.m["git"])

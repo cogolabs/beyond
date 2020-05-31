@@ -3,7 +3,6 @@ package beyond
 import (
 	"encoding/json"
 	"flag"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -51,7 +50,7 @@ func tokenAuth(r *http.Request) string {
 	}
 	resp, err := http.Get(*tokenBase + token)
 	if err != nil {
-		log.Println(err)
+		Error(err)
 		return ""
 	}
 	defer resp.Body.Close()
@@ -63,7 +62,7 @@ func tokenAuth(r *http.Request) string {
 	v := &tokenUser{}
 	err = json.NewDecoder(resp.Body).Decode(v)
 	if err != nil {
-		log.Println(err)
+		Error(err)
 		return ""
 	}
 	tokenCache.Set(token, v.Login, cache.DefaultExpiration)

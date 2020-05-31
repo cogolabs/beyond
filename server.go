@@ -23,6 +23,7 @@ var (
 
 	fouroFourMessage = flag.String("404-message", "Please contact your network administrators to whitelist this system.", "message to use for unlisted hosts when learning is disabled or fails")
 	fouroOneCode     = flag.Int("401-code", 418, "status to respond when a user needs authentication")
+	headerPrefix     = flag.String("header-prefix", "Beyond", "prefix extra headers with this string")
 
 	skipVerify = flag.Bool("insecure-skip-verify", false, "allow TLS backends without valid certificates")
 	wsCompress = flag.Bool("websocket-compression", false, "allow websocket transport compression (gorilla/experimental)")
@@ -55,6 +56,9 @@ func init() {
 
 func Setup() error {
 	err := hostMasqSetup(*hostMasq)
+	if err == nil {
+		err = logSetup()
+	}
 	if err == nil {
 		err = oidcSetup()
 	}

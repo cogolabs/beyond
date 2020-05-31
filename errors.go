@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 )
 
@@ -55,7 +54,7 @@ func errorExecute(w http.ResponseWriter, status int, description string) error {
 func errorHandler(w http.ResponseWriter, status int, description string) {
 	err := errorExecute(w, status, description)
 	if err != nil {
-		log.Println(err)
+		WithField("code", status).WithField("err", err.Error()).Error(description)
 	}
 }
 

@@ -82,6 +82,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	if user == "" {
 		user = tokenAuth(r)
 	}
+	if user != "" {
+		r.Header.Set(*headerPrefix+"-User", user)
+	}
 
 	// apply whitelist
 	if whitelisted(r) {

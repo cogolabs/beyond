@@ -4,7 +4,6 @@ import (
 	"flag"
 	"net"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"strings"
 	"time"
@@ -28,7 +27,7 @@ func learn(host string) http.Handler {
 	if err != nil {
 		return nil
 	}
-	return httputil.NewSingleHostReverseProxy(u)
+	return newSHRP(u)
 }
 
 func learnHostScheme(hostname string) string {

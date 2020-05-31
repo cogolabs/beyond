@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -38,7 +37,7 @@ var (
 			return
 
 		default:
-			log.Println("XXX OIDC URL: ", r.URL.Path)
+			WithField("path", r.URL.Path).Error("Invalid OIDC Request")
 			return
 
 		}

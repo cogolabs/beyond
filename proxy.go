@@ -48,6 +48,15 @@ func nexthop(w http.ResponseWriter, r *http.Request) {
 	nextProxy.ServeHTTP(w, r)
 }
 
+func newSHRP(target *url.URL) *httputil.ReverseProxy {
+	p := httputil.NewSingleHostReverseProxy(target)
+	p.ModifyResponse = func(resp *http.Response) error {
+		logRoundtrip(resp)
+		return nil
+	}
+	return p
+}
+
 func reproxy() error {
 	cleanup := map[string]bool{}
 	hostProxy.Range(func(key interface{}, value interface{}) bool {
@@ -65,7 +74,7 @@ func reproxy() error {
 				lerr = err
 			} else {
 				delete(cleanup, u.Host)
-				hostProxy.Store(u.Host, httputil.NewSingleHostReverseProxy(u))
+				hostProxy.Store(u.Host, newSHRP(u))
 			}
 		}
 	}

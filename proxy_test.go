@@ -54,3 +54,15 @@ func TestWebsocketNew(t *testing.T) {
 
 	assert.Equal(t, "wss:"+r.URL.String()[6:], p.Backend(r).String())
 }
+
+func TestWSPDirector(t *testing.T) {
+	incoming, err := http.NewRequest("GET", "https://localhost", nil)
+	assert.NoError(t, err)
+	incoming.Header.Set("User-Agent", "User-Agent")
+
+	out := http.Header{}
+	websocketproxyDirector(incoming, out)
+
+	assert.Equal(t, out.Get("User-Agent"), "User-Agent")
+	assert.Equal(t, out.Get("X-Forwarded-Proto"), "https")
+}

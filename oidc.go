@@ -31,9 +31,9 @@ type oidcVerifierI interface {
 	Verify(context.Context, string) (*oidc.IDToken, error)
 }
 
-func oidcSetup() error {
+func oidcSetup(issuer string) error {
 	ctx := context.Background()
-	provider, err := oidc.NewProvider(ctx, *oidcIssuer)
+	provider, err := oidc.NewProvider(ctx, issuer)
 	if err != nil {
 		return err
 	}
@@ -64,22 +64,24 @@ func oidcVerify(code string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	return oidcVerifyToken(ctx, token)
+}
 
+func oidcVerifyToken(ctx context.Context, token *oauth2.Token) (string, error) {
 	rawID, ok := token.Extra("id_token").(string)
 	if !ok {
 		return "", fmt.Errorf("missing ID token")
 	}
+	return oidcVerifyTokenID(ctx, rawID)
+}
 
-	tokenID, err := oidcVerifier.Verify(ctx, rawID)
-	if err != nil {
-		return "", err
+func oidcVerifyTokenID(ctx context.Context, rawID string) (string, error) {
+	var err error
+	if tokenID, err := oidcVerifier.Verify(ctx, rawID); err == nil {
+		claims := new(oidcClaims)
+		if err = tokenID.Claims(claims); err == nil {
+			return claims.Email, nil
+		}
 	}
-
-	claims := new(oidcClaims)
-	err = tokenID.Claims(claims)
-	if err != nil {
-		return "", err
-	}
-
-	return claims.Email, nil
+	return "", err
 }

@@ -19,18 +19,17 @@ var (
 )
 
 func learn(host string) http.Handler {
-	newbase := learnHostScheme(host)
-	if newbase == "" {
-		return nil
+	newBase := learnBase(host)
+	if newBase != "" {
+		u, err := url.Parse(newBase)
+		if err == nil {
+			return newSHRP(u)
+		}
 	}
-	u, err := url.Parse(newbase)
-	if err != nil {
-		return nil
-	}
-	return newSHRP(u)
+	return nil
 }
 
-func learnHostScheme(hostname string) string {
+func learnBase(hostname string) string {
 	for _, httpsPort := range strings.Split(*learnHTTPSPorts, ",") {
 		c, err := net.DialTimeout("tcp", hostname+":"+httpsPort, *learnDialTimeout)
 		if err == nil {

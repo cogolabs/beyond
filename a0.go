@@ -2,8 +2,9 @@ package beyond
 
 import (
 	"log"
-	"net"
 	"time"
+
+	"github.com/cogolabs/wait"
 )
 
 func init() {
@@ -11,13 +12,5 @@ func init() {
 	log.SetFlags(log.Flags() | log.Lshortfile)
 
 	// wait for networking
-	for i := 0; i < 5; i++ {
-		addrs, _ := net.InterfaceAddrs()
-		for _, addr := range addrs {
-			if a, ok := addr.(*net.IPNet); ok && a.IP.IsGlobalUnicast() {
-				return
-			}
-		}
-		time.Sleep(time.Second)
-	}
+	wait.ForNetwork(5, time.Second)
 }

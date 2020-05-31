@@ -60,7 +60,7 @@ func Setup() error {
 		err = logSetup()
 	}
 	if err == nil {
-		err = oidcSetup()
+		err = oidcSetup(*oidcIssuer)
 	}
 	if err == nil {
 		err = refreshFence()

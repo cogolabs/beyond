@@ -67,7 +67,10 @@ func (o *oidcMock) Exchange(ctx context.Context, code string) (*oauth2.Token, er
 	return token, nil
 }
 
-func (o *oidcMock) Verify(context.Context, string) (*oidc.IDToken, error) {
+func (o *oidcMock) Verify(ctx context.Context, raw string) (*oidc.IDToken, error) {
+	if raw == "err" {
+		return nil, http.ErrHijacked
+	}
 	token := &oidc.IDToken{}
 
 	// requires gcflags=-l
@@ -83,6 +86,10 @@ func init() {
 	oidcWK.Issuer = oidcServer.URL + oidcWK.Issuer
 	oidcWK.Token_endpoint = oidcServer.URL + oidcWK.Token_endpoint
 	oidcWK.Authorization_endpoint = oidcServer.URL + oidcWK.Authorization_endpoint
+}
+
+func TestOIDCSetup(t *testing.T) {
+	assert.Contains(t, oidcSetup("ftp://localhost").Error(), "unsupported protocol scheme")
 }
 
 func TestOIDCSuccess(t *testing.T) {
@@ -104,4 +111,17 @@ func TestOIDCSuccess(t *testing.T) {
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "NEXT", response.Body)
 	})
+}
+
+func TestOIDCVerifyToken(t *testing.T) {
+	token := &oauth2.Token{}
+	s, err := oidcVerifyToken(context.TODO(), token)
+	assert.Empty(t, s)
+	assert.Equal(t, "missing ID token", err.Error())
+}
+
+func TestOIDCVerifyTokenID(t *testing.T) {
+	email, err := oidcVerifyTokenID(context.TODO(), "err")
+	assert.Equal(t, "", email)
+	assert.NoError(t, err)
 }

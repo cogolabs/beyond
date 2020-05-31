@@ -9,6 +9,12 @@
 			"revisionTime": "2019-12-09T09:45:21Z"
 		},
 		{
+			"checksumSHA1": "tWlPZx8oT0cxGkACQ2uxlUuVlWE=",
+			"path": "github.com/cogolabs/wait",
+			"revision": "18b10c34d00e5dc856f6d5abc0b2355cf115bf44",
+			"revisionTime": "2020-05-31T15:44:40Z"
+		},
+		{
 			"checksumSHA1": "jYJ9pZOHhVSOWxdTeSI+nqV7EI8=",
 			"path": "github.com/coreos/go-oidc",
 			"revision": "a4973d9a4225417aecf5d450a9522f00c1f7130f",

@@ -27,6 +27,14 @@ func TestH2W(t *testing.T) {
 	assert.Nil(t, actual)
 }
 
+func TestReproxyParseError(t *testing.T) {
+	test := sites.m["test"]
+	sites.m["test"] = map[string]bool{":": true}
+	err := reproxy()
+	assert.Contains(t, err.Error(), "missing protocol scheme")
+	sites.m["test"] = test
+}
+
 func TestWebsocketEcho(t *testing.T) {
 	// echo.websocket.org offline as of 2019/01/29
 	t.SkipNow()

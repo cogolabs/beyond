@@ -1,6 +1,7 @@
 package beyond
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -51,4 +52,21 @@ func TestErrorPlain(t *testing.T) {
 	})
 
 	*errorPlain = false
+}
+
+type testResponseWriter struct {
+	http.ResponseWriter
+}
+
+func (w *testResponseWriter) WriteHeader(code int) {}
+func (w *testResponseWriter) Header() http.Header  { return http.Header{} }
+func (w *testResponseWriter) Write(data []byte) (n int, err error) {
+	return 0, fmt.Errorf("WriteError")
+}
+
+func TestErrorExecuteWriteError(t *testing.T) {
+	w := &testResponseWriter{}
+	err := errorExecute(w, 500, "WriteError")
+	assert.Equal(t, "WriteError", err.Error())
+	errorHandler(w, 500, "WriteError")
 }

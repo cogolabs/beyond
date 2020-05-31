@@ -14,9 +14,22 @@ var (
 	oidcClientID     = flag.String("client-id", "f8b8b020-4ec2-0135-6452-027de1ec0c4e43491", "OIDC client ID")
 	oidcClientSecret = flag.String("client-secret", "cxLF74XOeRRFDJbKuJpZAOtL4pVPK1t2XGVrDbe5Rx0Uij1LS2e9k7opZI6jQzHC", "OIDC client secret")
 
-	oidcConfig   *oauth2.Config
-	oidcVerifier *oidc.IDTokenVerifier
+	oidcConfig   oidcConfigI
+	oidcVerifier oidcVerifierI
 )
+
+type oidcClaims struct {
+	Email string `json:"email"`
+}
+
+type oidcConfigI interface {
+	AuthCodeURL(string, ...oauth2.AuthCodeOption) string
+	Exchange(context.Context, string) (*oauth2.Token, error)
+}
+
+type oidcVerifierI interface {
+	Verify(context.Context, string) (*oidc.IDToken, error)
+}
 
 func oidcSetup() error {
 	ctx := context.Background()
@@ -62,10 +75,8 @@ func oidcVerify(code string) (string, error) {
 		return "", err
 	}
 
-	var claims struct {
-		Email string `json:"email"`
-	}
-	err = tokenID.Claims(&claims)
+	claims := new(oidcClaims)
+	err = tokenID.Claims(claims)
 	if err != nil {
 		return "", err
 	}

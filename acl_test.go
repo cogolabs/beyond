@@ -52,4 +52,9 @@ func TestACL(t *testing.T) {
 	assert.NotEmpty(t, sites.m["git"])
 	assert.NotEmpty(t, whitelist.m["host"])
 	assert.NotEmpty(t, whitelist.m["path"])
+
+	reqDeny, _ := http.NewRequest("GET", "https://deny", nil)
+	assert.True(t, deny(reqDeny, "consultant@gmail.com"))
+	reqAllow, _ := http.NewRequest("GET", "https://github.com/test", nil)
+	assert.False(t, deny(reqAllow, "consultant@gmail.com"))
 }

@@ -111,3 +111,24 @@ func whitelisted(r *http.Request) bool {
 	}
 	return allow
 }
+
+func deny(r *http.Request, user string) bool {
+	fence.RLock()
+	zones, ok := fence.m[user]
+	fence.RUnlock()
+
+	if !ok || len(zones) < 1 {
+		return false
+	}
+
+	sites.RLock()
+	m := sites.m
+	sites.RUnlock()
+
+	for k := range zones {
+		if m[k]["https://"+r.Host] || m[k]["http://"+r.Host] {
+			return false
+		}
+	}
+	return true
+}

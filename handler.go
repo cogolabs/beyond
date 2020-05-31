@@ -92,9 +92,15 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// deny
+	// force login
 	if user == "" {
 		login(w, r)
+		return
+	}
+
+	// apply fence
+	if deny(r, user) {
+		errorHandler(w, 403, "Access Denied")
 		return
 	}
 

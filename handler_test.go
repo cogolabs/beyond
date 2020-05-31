@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/drewolson/testflight"
+	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,6 +89,21 @@ func TestHandlerOidcStateValid(t *testing.T) {
 		assert.Equal(t, 401, response.StatusCode)
 		assert.Contains(t, response.Body, "oauth2: cannot fetch token: ")
 	})
+}
+
+func TestHandlerWebsocket(t *testing.T) {
+	server := httptest.NewServer(h)
+	x, y, err := websocket.DefaultDialer.Dial(strings.Replace(server.URL, "http://", "ws://", 1)+"/", http.Header{"Host": []string{"echo.websocket.org"}})
+	assert.NoError(t, err)
+	err = x.WriteMessage(websocket.TextMessage, []byte("BEYOND"))
+	assert.NoError(t, err)
+
+	typ, msg, err := x.ReadMessage()
+	assert.Equal(t, 101, y.StatusCode)
+	assert.Equal(t, websocket.TextMessage, typ)
+	assert.Equal(t, "BEYOND", string(msg))
+	assert.NoError(t, err)
+	server.Close()
 }
 
 func TestHandlerWhitelist(t *testing.T) {

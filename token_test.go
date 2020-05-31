@@ -13,8 +13,14 @@ import (
 )
 
 var (
-	tokenTestLogin = "user1"
-	tokenTestToken = "932928c0a4edf9878ee0257a1d8f4d06adaaffee"
+	tokenTestTokenUsers = map[string]string{
+		"932928c0a4edf9878ee0257a1d8f4d06adaaffee": "user1",
+		"257a1d8f4d06adaaffee932928c0a4edf9878ee0": "vendor@gmail.com",
+	}
+	tokenTestUserTokens = map[string]string{
+		"user1":            "932928c0a4edf9878ee0257a1d8f4d06adaaffee",
+		"vendor@gmail.com": "257a1d8f4d06adaaffee932928c0a4edf9878ee0",
+	}
 
 	tokenServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.FormValue("access_token") == "invalid" {
@@ -24,11 +30,12 @@ var (
 			}
 			return
 		}
-		if r.FormValue("access_token") != tokenTestToken {
+		user := tokenTestTokenUsers[r.FormValue("access_token")]
+		if user == "" {
 			w.WriteHeader(403)
 			return
 		}
-		err := json.NewEncoder(w).Encode(tokenUser{Login: tokenTestLogin})
+		err := json.NewEncoder(w).Encode(tokenUser{Login: user})
 		if err != nil {
 			errorHandler(w, 500, err.Error())
 		}
@@ -54,14 +61,14 @@ func TestTokenBasic(t *testing.T) {
 	r, err := http.NewRequest("GET", "/", nil)
 	assert.NoError(t, err)
 
-	r.SetBasicAuth(tokenTestToken, "x-oauth-basic")
+	r.SetBasicAuth(tokenTestUserTokens["user1"], "x-oauth-basic")
 	login1 := tokenAuth(r)
-	r.SetBasicAuth("", tokenTestToken)
+	r.SetBasicAuth("", tokenTestUserTokens["user1"])
 	login2 := tokenAuth(r)
 	assert.Equal(t, "user1", login1)
 	assert.Equal(t, "user1", login2)
 
-	r.SetBasicAuth(tokenTestToken, "foobar")
+	r.SetBasicAuth(tokenTestUserTokens["user1"], "foobar")
 	assert.Equal(t, "", tokenAuth(r))
 }
 
@@ -72,7 +79,7 @@ func TestTokenFederation(t *testing.T) {
 	r.Header.Set("Authorization", "token test")
 	assert.Equal(t, "", tokenAuth(r))
 
-	r.Header.Set("Authorization", "token "+tokenTestToken)
+	r.Header.Set("Authorization", "token "+tokenTestUserTokens["user1"])
 	login1 := tokenAuth(r)
 	login2 := tokenAuth(r)
 	assert.Equal(t, "user1", login1)
@@ -83,7 +90,7 @@ func TestTokenSuccess(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/ip", nil)
 		assert.Nil(t, err)
-		request.Header.Set("Authorization", "token "+tokenTestToken)
+		request.Header.Set("Authorization", "Token "+tokenTestUserTokens["user1"])
 		request.Host = "httpbin.org"
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
@@ -92,10 +99,21 @@ func TestTokenSuccess(t *testing.T) {
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/ip", nil)
 		assert.Nil(t, err)
-		request.SetBasicAuth(tokenTestLogin, tokenTestToken)
+		request.SetBasicAuth("user1", tokenTestUserTokens["user1"])
 		request.Host = "httpbin.org"
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "{\n  \"origin\"", strings.Split(response.Body, ":")[0])
+	})
+
+	// expect ACL 403
+	testflight.WithServer(h, func(r *testflight.Requester) {
+		request, err := http.NewRequest("GET", "/ip", nil)
+		assert.Nil(t, err)
+		request.Header.Set("Authorization", "Token "+tokenTestUserTokens["vendor@gmail.com"])
+		request.Host = "httpbin.org"
+		response := r.Do(request)
+		assert.Equal(t, 403, response.StatusCode)
+		assert.Contains(t, response.Body, "Access Denied")
 	})
 }

@@ -85,7 +85,7 @@ func TestHandlerOidcStateValid(t *testing.T) {
 		request.Host = *host
 		request.Header.Set("Cookie", cookie)
 		response := r.Do(request)
-		assert.Equal(t, 400, response.StatusCode)
+		assert.Equal(t, 401, response.StatusCode)
 		assert.Contains(t, response.Body, "oauth2: cannot fetch token: ")
 	})
 }

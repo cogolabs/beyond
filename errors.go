@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -27,7 +28,7 @@ var (
 </html>`))
 )
 
-func errorHandler(w http.ResponseWriter, status int, description string) error {
+func errorExecute(w http.ResponseWriter, status int, description string) error {
 	w.WriteHeader(status)
 	if *errorPlain {
 		_, err := fmt.Fprintln(w, description)
@@ -49,6 +50,13 @@ func errorHandler(w http.ResponseWriter, status int, description string) error {
 		data["email"] = *errorEmail
 	}
 	return errorTemplate.Execute(w, data)
+}
+
+func errorHandler(w http.ResponseWriter, status int, description string) {
+	err := errorExecute(w, status, description)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 // https://tools.ietf.org/html/rfc6749#section-4.1.2.1

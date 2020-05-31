@@ -44,7 +44,7 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 		}
 		email, err := oidcVerify(r.FormValue("code"))
 		if err != nil {
-			errorHandler(w, 400, err.Error())
+			errorHandler(w, 401, err.Error())
 			return
 		}
 		session.Values["user"] = email
@@ -59,27 +59,34 @@ func beyond(w http.ResponseWriter, r *http.Request) {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
+	// respond to loadbalancer pings
 	if r.URL.Path == *healthPath {
 		fmt.Fprint(w, *healthReply)
 		return
 	}
+
+	// handle new logins
 	if r.Host == *host {
 		beyond(w, r)
 		return
 	}
-	if whitelisted(r) {
-		nexthop(w, r)
-		return
-	}
 
+	// check for cookie authentication
 	session, err := store.Get(r, *cookieName)
 	if err != nil {
 		session = store.New(*cookieName)
 	}
-
 	user, _ := session.Values["user"].(string)
+
+	// check for oauth2 token
 	if user == "" {
 		user = tokenAuth(r)
+	}
+
+	// apply whitelist
+	if whitelisted(r) {
+		nexthop(w, r)
+		return
 	}
 
 	// deny

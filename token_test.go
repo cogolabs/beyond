@@ -18,14 +18,20 @@ var (
 
 	tokenServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.FormValue("access_token") == "invalid" {
-			io.WriteString(w, "{")
+			_, err := io.WriteString(w, "{")
+			if err != nil {
+				errorHandler(w, 500, err.Error())
+			}
 			return
 		}
 		if r.FormValue("access_token") != tokenTestToken {
 			w.WriteHeader(403)
 			return
 		}
-		json.NewEncoder(w).Encode(tokenUser{Login: tokenTestLogin})
+		err := json.NewEncoder(w).Encode(tokenUser{Login: tokenTestLogin})
+		if err != nil {
+			errorHandler(w, 500, err.Error())
+		}
 	}))
 )
 

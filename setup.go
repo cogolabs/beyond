@@ -31,7 +31,7 @@ var (
 	store *sessions.CookieStore
 )
 
-func init() {
+func Setup() error {
 	// setup encrypted cookies
 	store = sessions.NewCookieStore([]byte(*cookieKey1), []byte(*cookieKey2))
 	store.Config.Domain = *cookieDom
@@ -52,9 +52,7 @@ func init() {
 	websocketproxy.DefaultDialer.EnableCompression = *wsCompress
 	websocketproxy.DefaultUpgrader.EnableCompression = *wsCompress
 	websocketproxy.DefaultUpgrader.CheckOrigin = websocketproxyCheckOrigin
-}
 
-func Setup() error {
 	err := hostMasqSetup(*hostMasq)
 	if err == nil {
 		err = logSetup()

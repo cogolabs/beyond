@@ -11,9 +11,11 @@ Control access to services beyond your perimeter network. Deploy with split-DNS 
 - Authenticate via:
   - OpenID Connect
   - OAuth2 Tokens
-- Automate configuration w/ https:your.json
-- Nexthop Learning (via Favorite Ports: 443, 80, ...)
+- Automate Configuration w/ https://your.json
+- Customize Nexthop Learning (via Favorite Ports: 443, 80, ...)
 - Supports WebSockets
+- Supports GitHub Enterprise
+- Supports Private Docker Registry APIs (v2)
 
 ## Install
 ```

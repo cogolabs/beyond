@@ -53,7 +53,10 @@ func Setup() error {
 	websocketproxy.DefaultUpgrader.EnableCompression = *wsCompress
 	websocketproxy.DefaultUpgrader.CheckOrigin = websocketproxyCheckOrigin
 
-	err := hostMasqSetup(*hostMasq)
+	err := dockerSetup(*dockerBase)
+	if err == nil {
+		err = hostMasqSetup(*hostMasq)
+	}
 	if err == nil {
 		err = logSetup()
 	}

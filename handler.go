@@ -69,6 +69,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.Host == *host {
 		beyond(w, r)
 		return
+	} else if dockerHandler(w, r) {
+		// Docker Registry v2 APIs
+		return
 	}
 
 	// check for cookie authentication

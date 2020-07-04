@@ -1,6 +1,7 @@
 package beyond
 
 import (
+	"crypto/tls"
 	"flag"
 	"net"
 	"net/http"
@@ -29,25 +30,36 @@ func learn(host string) http.Handler {
 	return nil
 }
 
-func learnBase(hostname string) string {
+func learnBase(host string) string {
+	if strings.Contains(host, ":") {
+		if strings.HasPrefix(host, "http") {
+			return host
+		}
+		_, err := tls.Dial("tcp", host, nil)
+		if err == nil {
+			return "https://" + host
+		} else {
+			return "http://" + host
+		}
+	}
 	for _, httpsPort := range strings.Split(*learnHTTPSPorts, ",") {
-		c, err := net.DialTimeout("tcp", hostname+":"+httpsPort, *learnDialTimeout)
+		c, err := net.DialTimeout("tcp", host+":"+httpsPort, *learnDialTimeout)
 		if err == nil {
 			c.Close()
 			if httpsPort == "443" {
-				return "https://" + hostname
+				return "https://" + host
 			}
-			return "https://" + hostname + ":" + httpsPort
+			return "https://" + host + ":" + httpsPort
 		}
 	}
 	for _, httpPort := range strings.Split(*learnHTTPPorts, ",") {
-		c, err := net.DialTimeout("tcp", hostname+":"+httpPort, *learnDialTimeout)
+		c, err := net.DialTimeout("tcp", host+":"+httpPort, *learnDialTimeout)
 		if err == nil {
 			c.Close()
 			if httpPort == "80" {
-				return "http://" + hostname
+				return "http://" + host
 			}
-			return "http://" + hostname + ":" + httpPort
+			return "http://" + host + ":" + httpPort
 		}
 	}
 	return ""

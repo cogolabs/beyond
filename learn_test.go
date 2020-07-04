@@ -32,4 +32,6 @@ func TestLearnHostScheme(t *testing.T) {
 	*learnHTTPPorts = ports2
 	assert.Equal(t, "https://golang.org", learnBase("golang.org"))
 	assert.NotNil(t, learn("golang.org"))
+
+	assert.Equal(t, "https://golang.org:443", learnBase("golang.org:443"))
 }

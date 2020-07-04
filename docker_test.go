@@ -65,7 +65,7 @@ func TestDockerV2(t *testing.T) {
 		token := v["token"].(string)
 		assert.NotZero(t, token)
 
-		assert.True(t, strings.HasPrefix(token, "MTU5Mjg"))
+		assert.True(t, strings.HasPrefix(token, "MTU5M"))
 
 		req, err = http.NewRequest("GET", "/v2/namespaces", nil)
 		assert.NoError(t, err)

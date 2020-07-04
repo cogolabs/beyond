@@ -28,34 +28,34 @@
 			"revisionTime": "2017-01-30T11:31:45Z"
 		},
 		{
-			"checksumSHA1": "aUuDJNsM9odzEaaiEaX1CbKAud8=",
+			"checksumSHA1": "BRmk5buWUhJkiRF0H3csGHol1rk=",
 			"path": "github.com/dghubble/sessions",
-			"revision": "26dc61fdb7361714ff41a80a2ad18cbdf8ba1956",
-			"revisionTime": "2016-10-06T20:21:22Z"
+			"revision": "43a1b0057682f978c8fe5439f2ba266a39098b36",
+			"revisionTime": "2019-07-08T00:30:27Z"
 		},
 		{
-			"checksumSHA1": "TG4kmLvhB1sqyaA0dMp9OGAnZQk=",
+			"checksumSHA1": "WZOp/R7n33zHX41GeqKGwnmBE0c=",
 			"path": "github.com/drewolson/testflight",
-			"revision": "7040c250b4721006c536587ff8ee8ff573838edb",
-			"revisionTime": "2016-08-16T13:56:44Z"
+			"revision": "260f5843f623435f41b0d42ad0bb942ecbfdd2b7",
+			"revisionTime": "2018-07-20T17:25:06Z"
 		},
 		{
-			"checksumSHA1": "ucTBCc7dDRKLGPsYfAzu/Gq63qA=",
+			"checksumSHA1": "mo95lsTo6uV/Yw9IhdwEA2mKJHI=",
 			"path": "github.com/gorilla/securecookie",
-			"revision": "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983",
-			"revisionTime": "2017-02-24T19:38:04Z"
+			"revision": "61b4ad17eb88d0d1118560d1101176279be2bc88",
+			"revisionTime": "2019-10-28T04:23:04Z"
 		},
 		{
-			"checksumSHA1": "8KawKW6FJguwWz5cPvMg/ChmepE=",
+			"checksumSHA1": "w80pSHuNAfMzGjyUMGdCmEINCFQ=",
 			"path": "github.com/gorilla/websocket",
-			"revision": "a69d9f6de432e2c6b296a947d8a5ee88f68522cf",
-			"revisionTime": "2017-07-18T20:23:41Z"
+			"revision": "b65e62901fc1c0d968042419e74789f6af455eb9",
+			"revisionTime": "2020-03-19T17:50:51Z"
 		},
 		{
-			"checksumSHA1": "fRWkKGcsBIXQt6Yd+N/uPmQskE4=",
+			"checksumSHA1": "gk9mFFdthwYa9YEy3qC2NBB5dLY=",
 			"path": "github.com/koding/websocketproxy",
-			"revision": "7338eeab09f30467d09fd12ae4ad0ccee0121ab1",
-			"revisionTime": "2017-03-29T21:11:15Z"
+			"revision": "7ed82d81a28c9ba1ed6fd1157ce714760f214c98",
+			"revisionTime": "2018-12-20T23:21:14Z"
 		},
 		{
 			"checksumSHA1": "JVGDxPn66bpe6xEiexs1r+y6jF0=",
@@ -83,28 +83,28 @@
 			"revisionTime": "2017-07-06T04:52:24Z"
 		},
 		{
-			"checksumSHA1": "9jFFVttlMr6qQ7e+IrcT20XmFQY=",
+			"checksumSHA1": "5ANF5DkdOtBOcLbnktV+NKMUYp8=",
 			"path": "github.com/sirupsen/logrus",
-			"revision": "61e43dc76f7ee59a82bdf3d71033dc12bea4c77d",
-			"revisionTime": "2017-01-13T01:19:11Z"
+			"revision": "6699a89a232f3db797f2e280639854bbc4b89725",
+			"revisionTime": "2020-05-28T08:56:38Z"
 		},
 		{
-			"checksumSHA1": "JXUVA1jky8ZX8w09p2t5KLs97Nc=",
+			"checksumSHA1": "80v6ZcUbxF6wUhwVrmy0eB44ArI=",
 			"path": "github.com/stretchr/testify/assert",
-			"revision": "4d4bfba8f1d1027c4fdbe371823030df51419987",
-			"revisionTime": "2017-01-30T11:31:45Z"
+			"revision": "87a988cffbb945287b83c99ff8bd0c1de930dd85",
+			"revisionTime": "2020-06-28T12:02:02Z"
 		},
 		{
-			"checksumSHA1": "dr5+PfIRzXeN+l1VG+s0lea9qz8=",
+			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
 			"path": "golang.org/x/net/context",
-			"revision": "02ac38e2528ff4adea90f184d71a3faa04b4b1b0",
-			"revisionTime": "2017-07-18T17:12:47Z"
+			"revision": "4c5254603344ea4a8ae4bed7e296a9588303e14f",
+			"revisionTime": "2020-06-24T15:59:55Z"
 		},
 		{
-			"checksumSHA1": "WHc3uByvGaMcnSoI21fhzYgbOgg=",
+			"checksumSHA1": "aFpql3G+Nw8zkzfqLWQJNZC8pu0=",
 			"path": "golang.org/x/net/context/ctxhttp",
-			"revision": "02ac38e2528ff4adea90f184d71a3faa04b4b1b0",
-			"revisionTime": "2017-07-18T17:12:47Z"
+			"revision": "4c5254603344ea4a8ae4bed7e296a9588303e14f",
+			"revisionTime": "2020-06-24T15:59:55Z"
 		},
 		{
 			"checksumSHA1": "SjCoL7KD7qBmgSuqGTCAuUhigDk=",
@@ -117,6 +117,24 @@
 			"path": "golang.org/x/oauth2/internal",
 			"revision": "cce311a261e6fcf29de72ca96827bdb0b7d9c9e6",
 			"revisionTime": "2017-06-29T19:00:38Z"
+		},
+		{
+			"checksumSHA1": "Ld0iviZSRGAKK6WSoti+3++1RmY=",
+			"path": "golang.org/x/sys/internal/unsafeheader",
+			"revision": "ddb9806d33aed8dbaac1cd6f1cba58952e87f933",
+			"revisionTime": "2020-06-25T18:26:03Z"
+		},
+		{
+			"checksumSHA1": "17LJ5GQlS0ntrF8WUFRHngHz66A=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "ddb9806d33aed8dbaac1cd6f1cba58952e87f933",
+			"revisionTime": "2020-06-25T18:26:03Z"
+		},
+		{
+			"checksumSHA1": "XbwBk8nUU6/hXoE/XfBVOGd9EiI=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "ddb9806d33aed8dbaac1cd6f1cba58952e87f933",
+			"revisionTime": "2020-06-25T18:26:03Z"
 		},
 		{
 			"checksumSHA1": "kzRhtiKHuEtzVtb6xZZU4N9u0Fc=",
@@ -135,6 +153,12 @@
 			"path": "gopkg.in/square/go-jose.v2/json",
 			"revision": "b25e6cab129e4a54675b42ea49d38e9c33ade9e6",
 			"revisionTime": "2017-06-07T17:41:08Z"
+		},
+		{
+			"checksumSHA1": "c2xmdlLwOBhvjCQ8St/EO+PTmYI=",
+			"path": "gopkg.in/yaml.v3",
+			"revision": "eeeca48fe7764f320e4870d231902bf9c1be2c08",
+			"revisionTime": "2020-06-15T11:34:13Z"
 		}
 	],
 	"rootPath": "github.com/cogolabs/beyond"

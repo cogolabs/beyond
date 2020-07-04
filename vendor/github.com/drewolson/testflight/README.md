@@ -102,13 +102,12 @@ func TestWebSocket(t *testing.T) {
 
 ## Contributing
 
-First, run the tests.
+Requires go `>= 1.11`.
+
+Run the tests.
 
 ```bash
-git clone git@github.com:drewolson/testflight.git $GOPATH/src/github.com/drewolson/testflight
-cd $GOPATH/src/github.com/drewolson/testflight
-
-make test
+go test -v ./...
 ```
 
 Now write new tests, fix them and send me a pull request!

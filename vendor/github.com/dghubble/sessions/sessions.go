@@ -8,7 +8,7 @@ const (
 	defaultMaxAge = 3600 * 24 * 7 // 1 week
 )
 
-// Config is the set of session cookie properties.
+// Config is the set of cookie properties.
 type Config struct {
 	// cookie domain/path scope (leave zeroed for requested resource scope)
 	Domain string
@@ -21,6 +21,8 @@ type Config struct {
 	HTTPOnly bool
 	// cookie may only be transferred over HTTPS
 	Secure bool
+	// prohibit sending in cross-site requests with SameSiteLaxMode or SameSiteLaxMode
+	SameSite http.SameSite
 }
 
 // Session represents Values state which  a named bundle of maintained web state

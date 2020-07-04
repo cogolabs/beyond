@@ -2,6 +2,7 @@
 package websocketproxy
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -48,11 +49,7 @@ type WebsocketProxy struct {
 
 // ProxyHandler returns a new http.Handler interface that reverse proxies the
 // request to the given target.
-func ProxyHandler(target *url.URL) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		NewProxy(target).ServeHTTP(rw, req)
-	})
-}
+func ProxyHandler(target *url.URL) http.Handler { return NewProxy(target) }
 
 // NewProxy returns a new Websocket reverse proxy that rewrites the
 // URL's to the scheme, host and base path provider in target.
@@ -100,6 +97,9 @@ func (w *WebsocketProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	for _, cookie := range req.Header[http.CanonicalHeaderKey("Cookie")] {
 		requestHeader.Add("Cookie", cookie)
 	}
+	if req.Host != "" {
+		requestHeader.Set("Host", req.Host)
+	}
 
 	// Pass X-Forwarded-For headers too, code below is a part of
 	// httputil.ReverseProxy. See http://en.wikipedia.org/wiki/X-Forwarded-For
@@ -137,7 +137,17 @@ func (w *WebsocketProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	// http://tools.ietf.org/html/draft-ietf-hybi-websocket-multiplexing-01
 	connBackend, resp, err := dialer.Dial(backendURL.String(), requestHeader)
 	if err != nil {
-		log.Printf("websocketproxy: couldn't dial to remote backend url %s\n", err)
+		log.Printf("websocketproxy: couldn't dial to remote backend url %s", err)
+		if resp != nil {
+			// If the WebSocket handshake fails, ErrBadHandshake is returned
+			// along with a non-nil *http.Response so that callers can handle
+			// redirects, authentication, etcetera.
+			if err := copyResponse(rw, resp); err != nil {
+				log.Printf("websocketproxy: couldn't write response after failed remote backend handshake: %s", err)
+			}
+		} else {
+			http.Error(rw, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
+		}
 		return
 	}
 	defer connBackend.Close()
@@ -160,19 +170,64 @@ func (w *WebsocketProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	// Also pass the header that we gathered from the Dial handshake.
 	connPub, err := upgrader.Upgrade(rw, req, upgradeHeader)
 	if err != nil {
-		log.Printf("websocketproxy: couldn't upgrade %s\n", err)
+		log.Printf("websocketproxy: couldn't upgrade %s", err)
 		return
 	}
 	defer connPub.Close()
 
-	errc := make(chan error, 2)
-	cp := func(dst io.Writer, src io.Reader) {
-		_, err := io.Copy(dst, src)
-		errc <- err
+	errClient := make(chan error, 1)
+	errBackend := make(chan error, 1)
+	replicateWebsocketConn := func(dst, src *websocket.Conn, errc chan error) {
+		for {
+			msgType, msg, err := src.ReadMessage()
+			if err != nil {
+				m := websocket.FormatCloseMessage(websocket.CloseNormalClosure, fmt.Sprintf("%v", err))
+				if e, ok := err.(*websocket.CloseError); ok {
+					if e.Code != websocket.CloseNoStatusReceived {
+						m = websocket.FormatCloseMessage(e.Code, e.Text)
+					}
+				}
+				errc <- err
+				dst.WriteMessage(websocket.CloseMessage, m)
+				break
+			}
+			err = dst.WriteMessage(msgType, msg)
+			if err != nil {
+				errc <- err
+				break
+			}
+		}
 	}
 
-	// Start our proxy now, everything is ready...
-	go cp(connBackend.UnderlyingConn(), connPub.UnderlyingConn())
-	go cp(connPub.UnderlyingConn(), connBackend.UnderlyingConn())
-	<-errc
+	go replicateWebsocketConn(connPub, connBackend, errClient)
+	go replicateWebsocketConn(connBackend, connPub, errBackend)
+
+	var message string
+	select {
+	case err = <-errClient:
+		message = "websocketproxy: Error when copying from backend to client: %v"
+	case err = <-errBackend:
+		message = "websocketproxy: Error when copying from client to backend: %v"
+
+	}
+	if e, ok := err.(*websocket.CloseError); !ok || e.Code == websocket.CloseAbnormalClosure {
+		log.Printf(message, err)
+	}
+}
+
+func copyHeader(dst, src http.Header) {
+	for k, vv := range src {
+		for _, v := range vv {
+			dst.Add(k, v)
+		}
+	}
+}
+
+func copyResponse(rw http.ResponseWriter, resp *http.Response) error {
+	copyHeader(rw.Header(), resp.Header)
+	rw.WriteHeader(resp.StatusCode)
+	defer resp.Body.Close()
+
+	_, err := io.Copy(rw, resp.Body)
+	return err
 }

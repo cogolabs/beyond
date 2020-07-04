@@ -1,5 +1,4 @@
-
-# Sessions [![GoDoc](https://godoc.org/github.com/dghubble/sessions?status.png)](https://godoc.org/github.com/dghubble/sessions)
+# sessions [![Build Status](https://travis-ci.org/dghubble/sessions.svg?branch=master)](https://travis-ci.org/dghubble/sessions) [![GoDoc](https://godoc.org/github.com/dghubble/sessions?status.svg)](https://godoc.org/github.com/dghubble/sessions)
 
 Package `sessions` provides minimalist Go sessions, backed by `securecookie` or database stores.
 
@@ -13,6 +12,16 @@ Package `sessions` provides minimalist Go sessions, backed by `securecookie` or 
 * Each `Session` provides `Save` and `Destroy` convenience methods.
 * Provides `CookieStore` for managing client-side secure cookies.
 * Extensible for custom session database backends.
+
+## Install
+
+```
+go get github.com/dghubble/sessions
+```
+
+## Documentation
+
+Read [GoDoc](https://godoc.org/github.com/dghubble/sessions)
 
 ### Differences from gorilla/sessions
 

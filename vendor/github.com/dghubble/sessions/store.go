@@ -32,6 +32,7 @@ func NewCookieStore(keyPairs ...[]byte) *CookieStore {
 			Path:     "/",
 			MaxAge:   defaultMaxAge,
 			HTTPOnly: true,
+			SameSite: http.SameSiteDefaultMode,
 		},
 	}
 }
@@ -86,6 +87,7 @@ func newCookie(name, value string, config *Config) *http.Cookie {
 		MaxAge:   config.MaxAge,
 		HttpOnly: config.HTTPOnly,
 		Secure:   config.Secure,
+		SameSite: config.SameSite,
 	}
 	// IE <9 does not understand MaxAge, set Expires based on MaxAge
 	if expires, present := cookieExpires(config.MaxAge); present {

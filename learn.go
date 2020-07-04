@@ -35,7 +35,7 @@ func learnBase(host string) string {
 		if strings.HasPrefix(host, "http") {
 			return host
 		}
-		_, err := tls.Dial("tcp", host, nil)
+		_, err := tls.DialWithDialer(&net.Dialer{Timeout: *learnDialTimeout}, "tcp", host, nil)
 		if err == nil {
 			return "https://" + host
 		} else {

@@ -84,7 +84,7 @@ func dockerHandler(w http.ResponseWriter, r *http.Request) bool {
 		return false
 	}
 
-	allow := r.URL.Path == "/v2/auth"
+	allow := r.URL.Path == "/v2/auth" && len(r.Header.Get("Authorization")) > 0
 	if !allow {
 		token := strings.Split(r.Header.Get("Authorization"), " ")
 		if len(token) > 1 && token[0] == "Bearer" {

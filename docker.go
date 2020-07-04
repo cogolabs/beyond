@@ -36,6 +36,8 @@ func dockerSetup(u string) error {
 }
 
 func dockerModifyResponse(resp *http.Response) error {
+	logRoundtrip(resp)
+
 	if resp.Header.Get("WWW-Authenticate") != "" {
 		resp.Header.Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+resp.Request.Host+`/v2/auth",service="`+dockerHost+`"`)
 	}

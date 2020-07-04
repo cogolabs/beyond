@@ -37,7 +37,7 @@ func tokenAuth(r *http.Request) string {
 		}
 	}
 	if token == "" {
-		token = r.FormValue("access_token")
+		token = r.URL.Query().Get("access_token")
 	}
 	if token == "" {
 		return ""

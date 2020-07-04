@@ -41,6 +41,8 @@ func Setup() error {
 	store = sessions.NewCookieStore([]byte(*cookieKey1), []byte(*cookieKey2))
 	store.Config.Domain = *cookieDom
 	store.Config.MaxAge = *cookieAge
+	store.Config.SameSite = http.SameSiteLaxMode
+	store.Config.Secure = true
 
 	// setup backend encryption
 	http.DefaultTransport = &http.Transport{

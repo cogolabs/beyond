@@ -27,6 +27,10 @@ func logSetup() error {
 }
 
 func logRoundtrip(resp *http.Response) {
+	if !*logHTTP {
+		return
+	}
+
 	d := map[string]interface{}{
 		"date": time.Now().Format(time.RFC3339),
 		"user": resp.Request.Header.Get(*headerPrefix + "-User"),
@@ -55,7 +59,5 @@ func logRoundtrip(resp *http.Response) {
 		}
 	}
 
-	if *logHTTP {
-		WithFields(d).Info("HTTP")
-	}
+	WithFields(d).Info("HTTP")
 }

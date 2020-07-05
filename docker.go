@@ -2,6 +2,7 @@ package beyond
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"io/ioutil"
@@ -51,25 +52,34 @@ func dockerModifyResponse(resp *http.Response) error {
 
 	v := map[string]interface{}{}
 	err := json.NewDecoder(resp.Body).Decode(&v)
-	if err != nil {
-		return err
-	}
-	v["token"], err = securecookie.EncodeMulti("token", v["token"], store.Codecs...)
-	if err != nil {
-		return err
+	if err == nil {
+		token, ok := v["token"].(string)
+		if ok && strings.Contains(token, ".") {
+			claim64 := strings.Split(token, ".")[1]
+			data, err := base64.RawStdEncoding.DecodeString(claim64)
+			if err == nil {
+				claim := new(dockerClaimSet)
+				err = json.Unmarshal(data, claim)
+				if err == nil && claim.Context.Kind == "user" {
+					v["token"], err = securecookie.EncodeMulti("token", v["token"], store.Codecs...)
+					if err == nil {
+						var buf bytes.Buffer
+						err = json.NewEncoder(&buf).Encode(v)
+						if err == nil {
+							// < {"token": "beyondXYZ"}
+
+							resp.Body = ioutil.NopCloser(&buf)
+							resp.ContentLength = int64(buf.Len())
+							resp.Header.Set("Content-Length", strconv.Itoa(buf.Len()))
+							return nil
+						}
+					}
+				}
+			}
+		}
 	}
 
-	var buf bytes.Buffer
-	err = json.NewEncoder(&buf).Encode(v)
-	if err != nil {
-		return err
-	}
-	resp.Body = ioutil.NopCloser(&buf)
-	resp.ContentLength = int64(buf.Len())
-	resp.Header.Set("Content-Length", strconv.Itoa(buf.Len()))
-
-	// < {"token": "beyondXYZ"}
-	return nil
+	return err
 }
 
 func dockerHandler(w http.ResponseWriter, r *http.Request) bool {
@@ -104,4 +114,65 @@ func dockerHandler(w http.ResponseWriter, r *http.Request) bool {
 	w.Header().Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+r.Host+`/v2/auth",service="`+dockerHost+`"`)
 	w.WriteHeader(401)
 	return true
+}
+
+// https://docs.docker.com/registry/spec/auth/jwt/
+//
+// {
+// 	"context": {
+// 	  "com.apostille.root": "$disabled"
+// 	},
+// 	"aud": "docker.colofoo.net",
+// 	"exp": 1593910505,
+// 	"iss": "quay",
+// 	"iat": 1593906905,
+// 	"nbf": 1593906905,
+// 	"sub": "(anonymous)"
+// }
+//
+// {
+// 	"access": [
+// 	  {
+// 		"type": "repository",
+// 		"name": "cogolabs/beyond",
+// 		"actions": [
+// 		  "pull"
+// 		]
+// 	  }
+// 	],
+// 	"context": {
+// 	  "entity_kind": "appspecifictoken",
+// 	  "kind": "user",
+// 	  "version": 2,
+// 	  "com.apostille.root": "$disabled",
+// 	  "user": "joe",
+// 	  "entity_reference": "4ac6f0e7-7bd2-4aea-9a77-738e1b98f22f"
+// 	},
+// 	"aud": null,
+// 	"exp": 1593911101,
+// 	"iss": "quay",
+// 	"iat": 1593907501,
+// 	"nbf": 1593907501,
+// 	"sub": "joe"
+// }
+type dockerClaimSet struct {
+	Access []struct {
+		Type    string   `json:"type"`
+		Name    string   `json:"name"`
+		Actions []string `json:"actions"`
+	} `json:"access"`
+	Context struct {
+		EntityKind       string `json:"entity_kind"`
+		Kind             string `json:"kind"`
+		Version          int    `json:"version"`
+		ComApostilleRoot string `json:"com.apostille.root"`
+		User             string `json:"user"`
+		EntityReference  string `json:"entity_reference"`
+	} `json:"context"`
+	Aud string `json:"aud"`
+	Exp int    `json:"exp"`
+	Iss string `json:"iss"`
+	Iat int    `json:"iat"`
+	Nbf int    `json:"nbf"`
+	Sub string `json:"sub"`
 }

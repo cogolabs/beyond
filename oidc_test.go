@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -99,7 +101,7 @@ func TestOIDCSuccess(t *testing.T) {
 
 	testflight.WithServer(h, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=barbaz&next=localhost/next", nil)
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 
 		vals := map[string]interface{}{"state": "barbaz", "next": oidcServer.URL + "/next"}
 		cookieValue, err := securecookie.EncodeMulti(*cookieName, &vals, store.Codecs...)
@@ -110,6 +112,19 @@ func TestOIDCSuccess(t *testing.T) {
 		response := r.Do(request)
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "NEXT", response.Body)
+
+		b := strings.NewReader("POSTED")
+		request, err = http.NewRequest("POST", oidcServer.URL+"/next", b)
+		assert.NoError(t, err)
+		request.AddCookie(&http.Cookie{Name: *cookieName, Value: cookieValue})
+
+		request.Host = *host
+		resp, err := http.DefaultClient.Do(request)
+		assert.NoError(t, err)
+		assert.Equal(t, 200, resp.StatusCode)
+		respBody, err := ioutil.ReadAll(resp.Body)
+		assert.NoError(t, err)
+		assert.Equal(t, "NEXT", string(respBody))
 	})
 }
 

@@ -77,7 +77,8 @@ func TestDockerV2(t *testing.T) {
 		token := v["token"].(string)
 		assert.NotZero(t, token)
 
-		assert.True(t, strings.HasPrefix(token, "MTU5M"))
+		assert.True(t, len(token) > 500)
+		assert.True(t, strings.HasPrefix(token, "MTU"))
 
 		req, err = http.NewRequest("GET", "/v2/auth", nil)
 		assert.NoError(t, err)

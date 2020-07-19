@@ -58,10 +58,58 @@
 			"revisionTime": "2018-12-20T23:21:14Z"
 		},
 		{
+			"checksumSHA1": "IAFfbDb3/3m71qXp5P31vGnXa0Q=",
+			"path": "github.com/mailru/easyjson",
+			"revision": "f5d75e7e500c21faa7d1f653ab7e855b3eed6192",
+			"revisionTime": "2020-03-12T16:11:26Z"
+		},
+		{
+			"checksumSHA1": "T8soMJArSZrYnhmdpAnq1bVxQ6Q=",
+			"path": "github.com/mailru/easyjson/buffer",
+			"revision": "f5d75e7e500c21faa7d1f653ab7e855b3eed6192",
+			"revisionTime": "2020-03-12T16:11:26Z"
+		},
+		{
+			"checksumSHA1": "8Qyp0ekkp7JuahJZnnzuTXESyFU=",
+			"path": "github.com/mailru/easyjson/jlexer",
+			"revision": "f5d75e7e500c21faa7d1f653ab7e855b3eed6192",
+			"revisionTime": "2020-03-12T16:11:26Z"
+		},
+		{
+			"checksumSHA1": "C72An0967WekWiUIFS+fAvoJpcY=",
+			"path": "github.com/mailru/easyjson/jwriter",
+			"revision": "f5d75e7e500c21faa7d1f653ab7e855b3eed6192",
+			"revisionTime": "2020-03-12T16:11:26Z"
+		},
+		{
+			"checksumSHA1": "wWNdjQfaWdVnmWzfVoTupUqX7EU=",
+			"path": "github.com/olivere/elastic",
+			"revision": "0eef387a17cda50f52850c6192412d5a60ff5490",
+			"revisionTime": "2019-03-30T13:40:10Z"
+		},
+		{
+			"checksumSHA1": "v/phfIsGFjsgpJqe4BEKbGmMYAY=",
+			"path": "github.com/olivere/elastic/config",
+			"revision": "0eef387a17cda50f52850c6192412d5a60ff5490",
+			"revisionTime": "2019-03-30T13:40:10Z"
+		},
+		{
+			"checksumSHA1": "AmcqvKDAUGvVsrf8NDCQ/B8cMj4=",
+			"path": "github.com/olivere/elastic/uritemplates",
+			"revision": "0eef387a17cda50f52850c6192412d5a60ff5490",
+			"revisionTime": "2019-03-30T13:40:10Z"
+		},
+		{
 			"checksumSHA1": "JVGDxPn66bpe6xEiexs1r+y6jF0=",
 			"path": "github.com/patrickmn/go-cache",
 			"revision": "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0",
 			"revisionTime": "2017-07-22T04:01:10Z"
+		},
+		{
+			"checksumSHA1": "I7hloldMJZTqUx6hbVDp5nk9fZQ=",
+			"path": "github.com/pkg/errors",
+			"revision": "27936f6d90f9c8e1145f11ed52ffffbfdb9e0af7",
+			"revisionTime": "2019-02-27T00:00:51Z"
 		},
 		{
 			"checksumSHA1": "zKKp5SZ3d3ycKe4EKMNT0BqAWBw=",

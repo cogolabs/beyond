@@ -20,8 +20,8 @@ var (
 	WithField  = log.WithField
 	WithFields = log.WithFields
 
-	logHTTP = flag.Bool("log-http", false, "log HTTP requests to stdout")
-	logJSON = flag.Bool("log-json", false, "logrus json output")
+	logHTTP = flag.Bool("log-http", false, "enable HTTP logging to stdout")
+	logJSON = flag.Bool("log-json", false, "use json output (logrus)")
 	logXFF  = flag.Bool("log-xff", true, "include X-Forwarded-For in logs")
 
 	logElastic   = flag.String("log-elastic", "", "csv of elasticsearch servers")
@@ -42,7 +42,7 @@ func logSetup() error {
 }
 
 func logRoundtrip(resp *http.Response) {
-	if !*logHTTP {
+	if !*logHTTP && *logElastic == "" {
 		return
 	}
 

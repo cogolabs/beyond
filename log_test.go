@@ -47,8 +47,11 @@ func init() {
 	*logJSON = true
 	*logXFF = true
 
+	// cover nil
 	*logElastic = ""
-	logSetup() // cover nil URL
+	logRoundtrip(nil)
+	logSetup()
+
 	*logElastic = logElasticTestServer.URL
 	*logElasticD = time.Millisecond
 	*logElasticW = 1

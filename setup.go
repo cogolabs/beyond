@@ -18,8 +18,8 @@ var (
 
 	cookieAge  = flag.Int("cookie-age", 3600*6, "MaxAge setting in seconds")
 	cookieDom  = flag.String("cookie-domain", ".colofoo.net", "session cookie domain")
-	cookieKey1 = flag.String("cookie-key1", "", "key1 of cookie crypto pair")
-	cookieKey2 = flag.String("cookie-key2", "", "key2 of cookie crypto pair")
+	cookieKey1 = flag.String("cookie-key1", "", `key1 of cookie crypto pair (example: "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u")`)
+	cookieKey2 = flag.String("cookie-key2", "", `key2 of cookie crypto pair (example: "Q599vrruZRhLFC144thCRZpyHM7qGDjt")`)
 	cookieName = flag.String("cookie-name", "beyond", "session cookie name")
 
 	fouroFourMessage = flag.String("404-message", "Please contact your network administrators to whitelist this system.", "message to use for unlisted hosts when learning is disabled or fails")

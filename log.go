@@ -27,8 +27,8 @@ var (
 	logElastic   = flag.String("log-elastic", "", "csv of elasticsearch servers")
 	logElasticD  = flag.Duration("log-elastic-interval", time.Second, "how often to commit bulk updates")
 	logElasticP  = flag.String("log-elastic-prefix", "beyond", "insert this on the front of elastic indexes")
-	logElasticW  = flag.Int("log-elastic-workers", 4, "bulk commit workers")
-	logElasticCh = make(chan *elastic.BulkUpdateRequest, 20480)
+	logElasticW  = flag.Int("log-elastic-workers", 3, "bulk commit workers")
+	logElasticCh = make(chan *elastic.BulkUpdateRequest, 10240)
 )
 
 func logSetup() error {

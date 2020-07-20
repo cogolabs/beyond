@@ -16,6 +16,7 @@ Control access to services beyond your perimeter network. Deploy with split-DNS 
 - Supports WebSockets
 - Supports GitHub Enterprise
 - Supports Private Docker Registry APIs (v2)
+- Analytics with ElasticSearch
 
 ## Install
 ```
@@ -42,13 +43,29 @@ Usage of ./httpd:
   -cookie-domain string
     	session cookie domain (default ".colofoo.net")
   -cookie-key1 string
-    	key1 of cookie crypto pair (default "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u")
+    	key1 of cookie crypto pair (example: "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u")
   -cookie-key2 string
-    	key2 of cookie crypto pair (default "Q599vrruZRhLFC144thCRZpyHM7qGDjt")
+    	key2 of cookie crypto pair (example: "Q599vrruZRhLFC144thCRZpyHM7qGDjt")
   -cookie-name string
     	session cookie name (default "beyond")
+  -docker-auth-scheme string
+    	(only for testing) (default "https")
+  -docker-url string
+    	 (default "https://docker.colofoo.net")
+  -error-color string
+    	css h1 color for errors (default "#69b342")
+  -error-email string
+    	address for help (eg. support@mycompany.com)
+  -error-plain
+    	disable html on error pages
   -fence-url string
     	URL to user fencing config (eg. https://pages.github.com/yourcompany/beyond-config/fence.json)
+  -header-prefix string
+    	prefix extra headers with this string (default "Beyond")
+  -health-path string
+    	URL of the health endpoint (default "/healthz/ping")
+  -health-reply string
+    	response body of the health endpoint (default "ok")
   -host string
     	hostname of self, eg. when generating OAuth redirect URLs (default "beyond.colofoo.net")
   -host-masq string
@@ -62,11 +79,31 @@ Usage of ./httpd:
   -learn-http-ports string
     	after HTTPS, try these HTTP ports (csv) (default "80,8080,6000,6060,7000,8000,9000,9200,15672")
   -learn-https-ports string
-    	try learning these backend HTTPS ports (csv) (default "443,4443,8443,9443")
+    	try learning these backend HTTPS ports (csv) (default "443,4443,6443,8443,9443")
   -learn-nexthops
     	set false to require explicit whitelisting (default true)
+  -log-elastic string
+    	csv of elasticsearch servers
+  -log-elastic-interval duration
+    	how often to commit bulk updates (default 1s)
+  -log-elastic-prefix string
+    	insert this on the front of elastic indexes (default "beyond")
+  -log-elastic-workers int
+    	bulk commit workers (default 3)
+  -log-http
+    	log HTTP requests to stdout
+  -log-json
+    	logrus json output
+  -log-xff
+    	include X-Forwarded-For in logs
   -oidc-issuer string
     	issuer URL provided by IdP (default "https://yourcompany.onelogin.com/oidc")
+  -server-idle-timeout duration
+    	maximum amount of time to wait for the next request when keep-alives are enabled (default 3m0s)
+  -server-read-timeout duration
+    	maximum duration for reading the entire request, including the body (default 1m0s)
+  -server-write-timeout duration
+    	maximum duration before timing out writes of the response (default 2m0s)
   -sites-url string
     	URL to allowed sites config (eg. https://pages.github.com/yourcompany/beyond-config/sites.json)
   -token-base string

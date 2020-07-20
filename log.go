@@ -22,7 +22,7 @@ var (
 
 	logHTTP = flag.Bool("log-http", false, "log HTTP requests to stdout")
 	logJSON = flag.Bool("log-json", false, "logrus json output")
-	logXFF  = flag.Bool("log-xff", false, "include X-Forwarded-For in logs")
+	logXFF  = flag.Bool("log-xff", true, "include X-Forwarded-For in logs")
 
 	logElastic   = flag.String("log-elastic", "", "csv of elasticsearch servers")
 	logElasticD  = flag.Duration("log-elastic-interval", time.Second, "how often to commit bulk updates")
@@ -102,16 +102,16 @@ func logElasticSetup(elasticURLs string) error {
 		for i := 0; i < *logElasticW; i++ {
 			go func() {
 				bulk := elasticSearch.Bulk()
-				logElasticWorker(bulk, time.NewTicker(*logElasticD))
+				logElasticWorker(bulk, *logElasticD)
 			}()
 		}
 	}
 	return nil
 }
 
-func logElasticWorker(bulk *elastic.BulkService, tick *time.Ticker) {
+func logElasticWorker(bulk *elastic.BulkService, duration time.Duration) {
+	tick := time.NewTicker(duration)
 	for {
-		// if bulk.NumberOfActions() > ...
 		select {
 		case elt := <-logElasticCh:
 			bulk.Add(elt)

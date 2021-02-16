@@ -28,7 +28,7 @@ func TestErrorQuery(t *testing.T) {
 		"unsupported_response_type": {501, "501 - Not Implemented"},
 		"temporarily_unavailable":   {503, "503 - Service Unavailable"},
 	} {
-		testflight.WithServer(h, func(r *testflight.Requester) {
+		testflight.WithServer(testMux, func(r *testflight.Requester) {
 			request, err := http.NewRequest("GET", "/oidc?error="+errorQuery, nil)
 			assert.Nil(t, err)
 			request.Host = *host
@@ -42,7 +42,7 @@ func TestErrorQuery(t *testing.T) {
 func TestErrorPlain(t *testing.T) {
 	*errorPlain = true
 
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?error=server_error&error_description=Foo+Biz", nil)
 		assert.Nil(t, err)
 		request.Host = *host

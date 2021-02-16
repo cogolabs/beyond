@@ -26,10 +26,16 @@ var (
 			fmt.Fprint(w, string(b))
 		}
 	}))
+
+	testMux http.Handler
 )
 
+func init() {
+	testMux = NewMux()
+}
+
 func TestWebPOST(t *testing.T) {
-	testflight.WithServer(h, func(rq *testflight.Requester) {
+	testflight.WithServer(testMux, func(rq *testflight.Requester) {
 		request, err := http.NewRequest("POST", "/", strings.NewReader("ping"))
 		request.Host = echoServer.URL[7:] // strip the http://
 		assert.NoError(t, err)

@@ -9,71 +9,54 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func beyond(w http.ResponseWriter, r *http.Request) {
+func handleLaunch(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
 
-	if r.FormValue("error") != "" {
+	session, err := store.Get(r, *cookieName)
+	if err != nil {
+		session = store.New(*cookieName)
+	}
+	session.Values["next"] = r.URL.Query().Get("next")
+	state, _ := randhex32()
+	session.Values["state"] = state
+	session.Save(w)
+
+	next := oidcConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
+	jsRedirect(w, next)
+}
+
+func handleOIDC(w http.ResponseWriter, r *http.Request) {
+	setCacheControl(w)
+
+	if r.URL.Query().Get("error") != "" {
 		errorQuery(w, r)
 		return
 	}
 
-	switch r.URL.Path {
-
-	case "/launch":
-		session, err := store.Get(r, *cookieName)
-		if err != nil {
-			session = store.New(*cookieName)
-		}
-		session.Values["next"] = r.FormValue("next")
-		state, _ := randhex32()
-		session.Values["state"] = state
-		session.Save(w)
-
-		next := oidcConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
-		jsRedirect(w, next)
-
-	case "/oidc":
-		session, err := store.Get(r, *cookieName)
-		if err != nil {
-			errorHandler(w, 400, err.Error())
-			return
-		}
-		if state, ok := session.Values["state"].(string); !ok || state != r.FormValue("state") {
-			errorHandler(w, 403, "Invalid Browser State")
-			return
-		}
-		email, err := oidcVerify(r.FormValue("code"))
-		if err != nil {
-			errorHandler(w, 401, err.Error())
-			return
-		}
-		session.Values["user"] = email
-		next, _ := session.Values["next"].(string)
-		session.Values["next"] = ""
-		session.Values["state"] = ""
-		session.Save(w)
-
-		http.Redirect(w, r, next, 302)
-
+	session, err := store.Get(r, *cookieName)
+	if err != nil {
+		errorHandler(w, 400, err.Error())
+		return
 	}
+	if state, ok := session.Values["state"].(string); !ok || state != r.URL.Query().Get("state") {
+		errorHandler(w, 403, "Invalid Browser State")
+		return
+	}
+	email, err := oidcVerify(r.URL.Query().Get("code"))
+	if err != nil {
+		errorHandler(w, 401, err.Error())
+		return
+	}
+	session.Values["user"] = email
+	next, _ := session.Values["next"].(string)
+	session.Values["next"] = ""
+	session.Values["state"] = ""
+	session.Save(w)
+
+	http.Redirect(w, r, next, 302)
 }
 
-func Handler(w http.ResponseWriter, r *http.Request) {
-	// respond to loadbalancer pings
-	if r.URL.Path == *healthPath {
-		fmt.Fprint(w, *healthReply)
-		return
-	}
-
-	// handle new logins
-	if r.Host == *host {
-		beyond(w, r)
-		return
-	} else if dockerHandler(w, r) {
-		// Docker Registry v2 APIs
-		return
-	}
-
+func handler(w http.ResponseWriter, r *http.Request) {
 	// check for cookie authentication
 	session, err := store.Get(r, *cookieName)
 	if err != nil {
@@ -112,6 +95,10 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
+	if w == nil {
+		return
+	}
+
 	setCacheControl(w)
 	w.WriteHeader(*fouroOneCode)
 
@@ -124,6 +111,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func jsRedirect(w http.ResponseWriter, next string) {
+	if w == nil {
+		return
+	}
+
 	// hack to guarantee interactive session
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, `
@@ -134,6 +125,9 @@ window.location.replace("%s");
 }
 
 func setCacheControl(w http.ResponseWriter) {
+	if w == nil {
+		return
+	}
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 }
 

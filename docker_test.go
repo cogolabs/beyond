@@ -33,23 +33,27 @@ func init() {
 			fmt.Fprint(w, `{"token":"`+dockerToken+`"}`)
 		}
 	}))
+	testServer.URL = strings.Replace(testServer.URL, "127.0.0.1", "docker.127.0.0.1.xip.io", -1)
 	*dockerBase = testServer.URL
 	*dockerScheme = "http"
+	dockerSetup(*dockerBase)
 }
 
 func TestDockerIE(t *testing.T) {
-	req, err := http.NewRequest("GET", "/", nil)
+	req, err := http.NewRequest("GET", "http://"+dockerHost+"/", nil)
 	assert.NoError(t, err)
-	req.Host = dockerHost
 	req.Header.Set("User-Agent", "MSIE")
-	assert.False(t, dockerHandler(nil, req))
+	testMux.ServeHTTP(nil, req)
+	setCacheControl(nil)
+	jsRedirect(nil, "")
+	login(nil, req)
 }
 
 func TestDockerV2(t *testing.T) {
 	err := dockerSetup(":")
 	assert.Error(t, err)
 
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		v2get := r.Get("/v2/auth")
 		assert.Equal(t, 418, v2get.StatusCode)
 

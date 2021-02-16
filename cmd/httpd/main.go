@@ -26,7 +26,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:    *bind,
-		Handler: http.HandlerFunc(beyond.Handler),
+		Handler: beyond.NewMux(),
 
 		// https://blog.cloudflare.com/exposing-go-on-the-internet/
 		ReadTimeout:  *srvReadTimeout,

@@ -99,7 +99,7 @@ func TestOIDCSuccess(t *testing.T) {
 	oidcConfig = mock
 	oidcVerifier = mock
 
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=barbaz&next=localhost/next", nil)
 		assert.NoError(t, err)
 

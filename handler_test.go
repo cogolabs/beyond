@@ -11,10 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var h = http.HandlerFunc(Handler)
-
 func TestHandlerPing(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", *healthPath, nil)
 		assert.Nil(t, err)
 		response := r.Do(request)
@@ -24,7 +22,7 @@ func TestHandlerPing(t *testing.T) {
 }
 
 func TestHandlerGo(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/test?a=1", nil)
 		assert.Nil(t, err)
 		request.Host = "github.com"
@@ -36,7 +34,7 @@ func TestHandlerGo(t *testing.T) {
 }
 
 func TestHandlerLaunch(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/launch?next=https%3A%2F%2Falachart.colofoo.net%2Ftest%3Fa%3D1", nil)
 		assert.Nil(t, err)
 		request.Host = *host
@@ -47,7 +45,7 @@ func TestHandlerLaunch(t *testing.T) {
 }
 
 func TestHandlerOidcNoCookie(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc", nil)
 		assert.Nil(t, err)
 		request.Host = *host
@@ -62,7 +60,7 @@ func TestHandlerOidcStateInvalid(t *testing.T) {
 	assert.NoError(t, store.Save(recorder, session))
 	cookie := strings.Split(recorder.Header().Get("Set-Cookie"), ";")[0]
 
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
 		assert.Nil(t, err)
 		request.Host = *host
@@ -80,7 +78,7 @@ func TestHandlerOidcStateValid(t *testing.T) {
 	assert.NoError(t, store.Save(recorder, session))
 	cookie := strings.Split(recorder.Header().Get("Set-Cookie"), ";")[0]
 
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/oidc?state=test1", nil)
 		assert.Nil(t, err)
 		request.Host = *host
@@ -92,7 +90,7 @@ func TestHandlerOidcStateValid(t *testing.T) {
 }
 
 func TestHandlerWebsocket(t *testing.T) {
-	server := httptest.NewServer(h)
+	server := httptest.NewServer(testMux)
 	x, y, err := websocket.DefaultDialer.Dial(strings.Replace(server.URL, "http://", "ws://", 1)+"/", http.Header{"Host": []string{"echo.websocket.org"}})
 	assert.NoError(t, err)
 	err = x.WriteMessage(websocket.TextMessage, []byte("BEYOND"))
@@ -107,7 +105,7 @@ func TestHandlerWebsocket(t *testing.T) {
 }
 
 func TestHandlerWhitelist(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/", nil)
 		assert.Nil(t, err)
 		request.Host = "github.githubassets.com"
@@ -116,7 +114,7 @@ func TestHandlerWhitelist(t *testing.T) {
 		assert.Equal(t, "", response.Header.Get("Set-Cookie"))
 		assert.Equal(t, "Welcome", string(response.RawBody[:7]))
 	})
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/.well-known/acme-challenge/test", nil)
 		assert.Nil(t, err)
 		request.Host = "github.com"
@@ -128,7 +126,7 @@ func TestHandlerWhitelist(t *testing.T) {
 }
 
 func TestHandlerXHR(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/test?a=1", nil)
 		assert.Nil(t, err)
 		request.Host = "github.com"
@@ -141,7 +139,7 @@ func TestHandlerXHR(t *testing.T) {
 }
 
 func TestNexthopInvalid(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/favicon.ico", nil)
 		assert.Nil(t, err)
 		request.Host = "test2.com"

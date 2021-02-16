@@ -23,14 +23,14 @@ var (
 	}
 
 	tokenServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.FormValue("access_token") == "invalid" {
+		if r.URL.Query().Get("access_token") == "invalid" {
 			_, err := io.WriteString(w, "{")
 			if err != nil {
 				errorHandler(w, 500, err.Error())
 			}
 			return
 		}
-		user := tokenTestTokenUsers[r.FormValue("access_token")]
+		user := tokenTestTokenUsers[r.URL.Query().Get("access_token")]
 		if user == "" {
 			w.WriteHeader(403)
 			return
@@ -87,7 +87,7 @@ func TestTokenFederation(t *testing.T) {
 }
 
 func TestTokenSuccess(t *testing.T) {
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/ip", nil)
 		assert.Nil(t, err)
 		request.Header.Set("Authorization", "Token "+tokenTestUserTokens["user1"])
@@ -96,7 +96,7 @@ func TestTokenSuccess(t *testing.T) {
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "{\n  \"origin\"", strings.Split(response.Body, ":")[0])
 	})
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/ip", nil)
 		assert.Nil(t, err)
 		request.SetBasicAuth("user1", tokenTestUserTokens["user1"])
@@ -107,7 +107,7 @@ func TestTokenSuccess(t *testing.T) {
 	})
 
 	// expect ACL 403
-	testflight.WithServer(h, func(r *testflight.Requester) {
+	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/ip", nil)
 		assert.Nil(t, err)
 		request.Header.Set("Authorization", "Token "+tokenTestUserTokens["vendor@gmail.com"])

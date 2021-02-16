@@ -61,9 +61,9 @@ func errorHandler(w http.ResponseWriter, status int, description string) {
 // https://tools.ietf.org/html/rfc6749#section-4.1.2.1
 
 func errorQuery(w http.ResponseWriter, r *http.Request) {
-	errorDescription := r.FormValue("error_description")
+	errorDescription := r.URL.Query().Get("error_description")
 
-	switch r.FormValue("error") {
+	switch r.URL.Query().Get("error") {
 
 	case "invalid_request":
 		errorHandler(w, 400, errorDescription)

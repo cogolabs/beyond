@@ -30,6 +30,7 @@ func dockerSetup(u string) error {
 	if err != nil {
 		return err
 	}
+
 	dockerHost = dockerURL.Hostname()
 	dockerRP = httputil.NewSingleHostReverseProxy(dockerURL)
 	dockerRP.ModifyResponse = dockerModifyResponse
@@ -82,18 +83,7 @@ func dockerModifyResponse(resp *http.Response) error {
 	return err
 }
 
-func dockerHandler(w http.ResponseWriter, r *http.Request) bool {
-	if r.Host != dockerHost {
-		return false
-	}
-
-	ua := r.UserAgent()
-	ua1 := strings.HasPrefix(ua, "docker/")
-	ua2 := strings.HasPrefix(ua, "Go-")
-	if !ua1 && !ua2 {
-		return false
-	}
-
+func dockerHandler(w http.ResponseWriter, r *http.Request) {
 	allow := r.URL.Path == "/v2/auth" && len(r.Header.Get("Authorization")) > 0
 	if !allow {
 		token := strings.Split(r.Header.Get("Authorization"), " ")
@@ -108,12 +98,12 @@ func dockerHandler(w http.ResponseWriter, r *http.Request) bool {
 	}
 	if allow {
 		dockerRP.ServeHTTP(w, r)
-		return true
+		return
 	}
+
 	w.Header().Set("Docker-Distribution-Api-Version", "registry/2.0")
 	w.Header().Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+r.Host+`/v2/auth",service="`+dockerHost+`"`)
 	w.WriteHeader(401)
-	return true
 }
 
 // https://docs.docker.com/registry/spec/auth/jwt/

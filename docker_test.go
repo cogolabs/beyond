@@ -10,9 +10,12 @@ import (
 	"testing"
 
 	"github.com/drewolson/testflight"
+	"github.com/gorilla/securecookie"
 
 	"github.com/stretchr/testify/assert"
 )
+
+const dockerToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImU3NDFhODNlODBhMzYwZWVhYmM1NDExZWE3NjE5MmM4NzdjMjdlZjJjYmZmNGQxMWQwZTExN2IyNzRjMDhkNWEifQ.eyJhY2Nlc3MiOltdLCJjb250ZXh0Ijp7ImVudGl0eV9raW5kIjoidXNlciIsImtpbmQiOiJ1c2VyIiwidmVyc2lvbiI6MiwiY29tLmFwb3N0aWxsZS5yb290IjoiJGRpc2FibGVkIiwidXNlciI6ImpvZSIsImVudGl0eV9yZWZlcmVuY2UiOiJjY2VhYmFhOS1mZmM5LTQ4MWUtOTdhZS1iZmMzYTExODMxNDAifSwiYXVkIjpudWxsLCJleHAiOjE1OTM5MTE3MzEsImlzcyI6InF1YXkiLCJpYXQiOjE1OTM5MDgxMzEsIm5iZiI6MTU5MzkwODEzMSwic3ViIjoiam9lIn0.VCZnfwtoJgpEh2U5sAHZlIJAm5pWLnwZVRoH4wnPy6jCQ4ZVw4gUNfZ4xQdBa1nDW-Zc3-iaTGCpVX12bEpaA-b98A7vzN0w6F8HCXij4QXLHGhGibxDO7k5UyPziBQCCXXB960ZVItkyttPsnCFgCPqhAwB5e3acuKKfJgtd-r8qkGXUAKIrk3zJPQvzzb4aI0poBcZh822r4hFY3BvjMlXeR4cKTzdn-96p5ZDj7zCYZanB81vVuENDhxxy_aGLwQWRp3p9GApVgcZCO2WKFDp-P7YYVpcZ5bc7ZlqWBy9RLn6wFGePAykygXwJfdkoeC2ShaHusLTNvqLMoMUYw"
 
 func init() {
 	testServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +30,7 @@ func init() {
 			fmt.Fprint(w, `{"token":`)
 		default:
 			w.WriteHeader(200)
-			fmt.Fprint(w, `{"token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImU3NDFhODNlODBhMzYwZWVhYmM1NDExZWE3NjE5MmM4NzdjMjdlZjJjYmZmNGQxMWQwZTExN2IyNzRjMDhkNWEifQ.eyJhY2Nlc3MiOltdLCJjb250ZXh0Ijp7ImVudGl0eV9raW5kIjoidXNlciIsImtpbmQiOiJ1c2VyIiwidmVyc2lvbiI6MiwiY29tLmFwb3N0aWxsZS5yb290IjoiJGRpc2FibGVkIiwidXNlciI6ImpvZSIsImVudGl0eV9yZWZlcmVuY2UiOiJjY2VhYmFhOS1mZmM5LTQ4MWUtOTdhZS1iZmMzYTExODMxNDAifSwiYXVkIjpudWxsLCJleHAiOjE1OTM5MTE3MzEsImlzcyI6InF1YXkiLCJpYXQiOjE1OTM5MDgxMzEsIm5iZiI6MTU5MzkwODEzMSwic3ViIjoiam9lIn0.VCZnfwtoJgpEh2U5sAHZlIJAm5pWLnwZVRoH4wnPy6jCQ4ZVw4gUNfZ4xQdBa1nDW-Zc3-iaTGCpVX12bEpaA-b98A7vzN0w6F8HCXij4QXLHGhGibxDO7k5UyPziBQCCXXB960ZVItkyttPsnCFgCPqhAwB5e3acuKKfJgtd-r8qkGXUAKIrk3zJPQvzzb4aI0poBcZh822r4hFY3BvjMlXeR4cKTzdn-96p5ZDj7zCYZanB81vVuENDhxxy_aGLwQWRp3p9GApVgcZCO2WKFDp-P7YYVpcZ5bc7ZlqWBy9RLn6wFGePAykygXwJfdkoeC2ShaHusLTNvqLMoMUYw"}`)
+			fmt.Fprint(w, `{"token":"`+dockerToken+`"}`)
 		}
 	}))
 	*dockerBase = testServer.URL
@@ -78,7 +81,10 @@ func TestDockerV2(t *testing.T) {
 		assert.NotZero(t, token)
 
 		assert.True(t, len(token) > 500)
-		assert.True(t, strings.HasPrefix(token, "MTU"))
+		err = securecookie.DecodeMulti("token", token, &token, store.Codecs...)
+		assert.NoError(t, err)
+		assert.Equal(t, token, dockerToken)
+		token = v["token"].(string)
 
 		req, err = http.NewRequest("GET", "/v2/auth", nil)
 		assert.NoError(t, err)

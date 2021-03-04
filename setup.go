@@ -63,6 +63,9 @@ func Setup() error {
 
 	err := dockerSetup(*dockerBase)
 	if err == nil {
+		err = federateSetup()
+	}
+	if err == nil {
 		err = hostMasqSetup(*hostMasq)
 	}
 	if err == nil {

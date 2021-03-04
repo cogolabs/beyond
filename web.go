@@ -13,6 +13,9 @@ func NewMux() http.Handler {
 		fmt.Fprint(rw, *healthReply)
 	})
 
+	mux.HandleFunc(*host+"/federate", federate)
+	mux.HandleFunc(*host+"/federate/verify", federateVerify)
+
 	mux.HandleFunc(*host+"/launch", handleLaunch)
 	mux.HandleFunc(*host+"/oidc", handleOIDC)
 

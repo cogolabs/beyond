@@ -29,7 +29,6 @@ $ go get -u -x github.com/cogolabs/beyond
 ## Usage
 ```
 $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
-Usage of ./httpd:
   -401-code int
     	status to respond when a user needs authentication (default 418)
   -404-message string
@@ -51,13 +50,19 @@ Usage of ./httpd:
   -docker-auth-scheme string
     	(only for testing) (default "https")
   -docker-url string
-    	 (default "https://docker.colofoo.net")
+    	when there is only one (legacy option) (default "https://docker.colofoo.net")
+  -docker-urls string
+    	docker server base URLs, comma separated multiple (default "https://harbor.colofoo.net,https://ghcr.colofoo.net")
   -error-color string
     	css h1 color for errors (default "#69b342")
   -error-email string
     	address for help (eg. support@mycompany.com)
   -error-plain
     	disable html on error pages
+  -federate-access string
+    	shared secret, 64 chars, enables federation
+  -federate-secret string
+    	internal secret, 64 chars
   -fence-url string
     	URL to user fencing config (eg. https://pages.github.com/yourcompany/beyond-config/fence.json)
   -header-prefix string
@@ -91,11 +96,11 @@ Usage of ./httpd:
   -log-elastic-workers int
     	bulk commit workers (default 3)
   -log-http
-    	log HTTP requests to stdout
+    	enable HTTP logging to stdout
   -log-json
-    	logrus json output
+    	use json output (logrus)
   -log-xff
-    	include X-Forwarded-For in logs
+    	include X-Forwarded-For in logs (default true)
   -oidc-issuer string
     	issuer URL provided by IdP (default "https://yourcompany.onelogin.com/oidc")
   -server-idle-timeout duration

@@ -18,30 +18,39 @@ import (
 // via https://docs.docker.com/registry/spec/auth/token/
 
 var (
-	dockerBase   = flag.String("docker-url", "https://docker.colofoo.net", "")
+	dockerBase   = flag.String("docker-url", "https://docker.colofoo.net", "when there is only one (legacy option)")
+	dockerURLs   = flag.String("docker-urls", "https://harbor.colofoo.net,https://ghcr.colofoo.net", "comma separated docker server base URLs")
 	dockerScheme = flag.String("docker-auth-scheme", "https", "(only for testing)")
 
-	dockerHost string
-	dockerRP   *httputil.ReverseProxy
+	dockerServers = map[string]*dockerServer{}
 )
 
-func dockerSetup(u string) error {
-	dockerURL, err := url.Parse(u)
-	if err != nil {
-		return err
-	}
+func dockerSetup(urls ...string) error {
+	for _, u := range urls {
+		dockerURL, err := url.Parse(u)
+		if err != nil {
+			return err
+		}
 
-	dockerHost = dockerURL.Hostname()
-	dockerRP = httputil.NewSingleHostReverseProxy(dockerURL)
-	dockerRP.ModifyResponse = dockerModifyResponse
+		srv := new(dockerServer)
+		srv.host = dockerURL.Hostname()
+		srv.proxy = httputil.NewSingleHostReverseProxy(dockerURL)
+		srv.proxy.ModifyResponse = srv.ModifyResponse
+		dockerServers[srv.host] = srv
+	}
 	return nil
 }
 
-func dockerModifyResponse(resp *http.Response) error {
+type dockerServer struct {
+	host  string
+	proxy *httputil.ReverseProxy
+}
+
+func (ds *dockerServer) ModifyResponse(resp *http.Response) error {
 	logRoundtrip(resp)
 
 	if resp.Header.Get("WWW-Authenticate") != "" {
-		resp.Header.Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+resp.Request.Host+`/v2/auth",service="`+dockerHost+`"`)
+		resp.Header.Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+resp.Request.Host+`/v2/auth",service="`+ds.host+`"`)
 	}
 	if resp.Request.URL.Path != "/v2/auth" || resp.StatusCode != 200 {
 		return nil
@@ -83,7 +92,20 @@ func dockerModifyResponse(resp *http.Response) error {
 	return err
 }
 
-func dockerHandler(w http.ResponseWriter, r *http.Request) {
+func (ds *dockerServer) RegisterHandlers(mux *http.ServeMux) {
+	mux.HandleFunc(ds.host+"/", func(rw http.ResponseWriter, r *http.Request) {
+		ua := r.UserAgent()
+		ua1 := strings.HasPrefix(ua, "docker/")
+		ua2 := strings.HasPrefix(ua, "Go-")
+		if !ua1 && !ua2 {
+			handler(rw, r)
+			return
+		}
+		ds.ServeHTTP(rw, r)
+	})
+}
+
+func (ds *dockerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	allow := r.URL.Path == "/v2/auth" && len(r.Header.Get("Authorization")) > 0
 	if !allow {
 		token := strings.Split(r.Header.Get("Authorization"), " ")
@@ -97,12 +119,12 @@ func dockerHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if allow {
-		dockerRP.ServeHTTP(w, r)
+		ds.proxy.ServeHTTP(w, r)
 		return
 	}
 
 	w.Header().Set("Docker-Distribution-Api-Version", "registry/2.0")
-	w.Header().Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+r.Host+`/v2/auth",service="`+dockerHost+`"`)
+	w.Header().Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+r.Host+`/v2/auth",service="`+ds.host+`"`)
 	w.WriteHeader(401)
 }
 

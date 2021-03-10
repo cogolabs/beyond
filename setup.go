@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/dghubble/sessions"
 	"github.com/koding/websocketproxy"
@@ -61,7 +62,12 @@ func Setup() error {
 	websocketproxy.DefaultUpgrader.EnableCompression = *wsCompress
 	websocketproxy.DefaultUpgrader.CheckOrigin = websocketproxyCheckOrigin
 
-	err := dockerSetup(*dockerBase)
+	dURLs := []string{*dockerBase}
+	if len(*dockerURLs) > 0 {
+		dURLs = append(dURLs, strings.Split(*dockerURLs, ",")...)
+	}
+
+	err := dockerSetup(dURLs...)
 	if err == nil {
 		err = federateSetup()
 	}

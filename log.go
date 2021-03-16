@@ -50,6 +50,8 @@ func logRoundtrip(resp *http.Response) {
 		"date": time.Now().Format(time.RFC3339),
 		"user": resp.Request.Header.Get(*headerPrefix + "-User"),
 
+		"useragent": resp.Request.UserAgent(),
+
 		"method": resp.Request.Method,
 		"host":   resp.Request.Host,
 		"path":   resp.Request.URL.Path,

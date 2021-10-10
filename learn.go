@@ -13,8 +13,8 @@ import (
 var (
 	learnNexthops = flag.Bool("learn-nexthops", true, "set false to require explicit whitelisting")
 
-	learnHTTPSPorts = flag.String("learn-https-ports", "443,4443,6443,8443,9443", "try learning these backend HTTPS ports (csv)")
-	learnHTTPPorts  = flag.String("learn-http-ports", "80,8080,6000,6060,7000,7070,8000,9000,9090,9200,15672", "after HTTPS, try these HTTP ports (csv)")
+	learnHTTPSPorts = flag.String("learn-https-ports", "443,4443,6443,8443,9443,9090", "try learning these backend HTTPS ports (csv)")
+	learnHTTPPorts  = flag.String("learn-http-ports", "80,8080,6000,6060,7000,7070,8000,9000,9200,15672", "after HTTPS, try these HTTP ports (csv)")
 
 	learnDialTimeout = flag.Duration("learn-dial-timeout", 5*time.Second, "skip port after this connection timeout")
 )

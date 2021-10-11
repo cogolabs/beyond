@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/cogolabs/beyond.svg?branch=master)](https://travis-ci.org/cogolabs/beyond)
 [![codecov](https://codecov.io/gh/cogolabs/beyond/branch/master/graph/badge.svg)](https://codecov.io/gh/cogolabs/beyond)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/cogolabs/beyond.svg)](https://hub.docker.com/r/cogolabs/beyond/)
+[![Docker](https://github.com/cogolabs/beyond/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/cogolabs/beyond/actions/workflows/docker-publish.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cogolabs/beyond)](https://goreportcard.com/report/github.com/cogolabs/beyond)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 

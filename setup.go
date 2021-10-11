@@ -81,6 +81,9 @@ func Setup() error {
 		err = oidcSetup(*oidcIssuer)
 	}
 	if err == nil {
+		err = samlSetup()
+	}
+	if err == nil {
 		err = refreshFence()
 	}
 	if err == nil {

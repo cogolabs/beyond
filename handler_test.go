@@ -90,6 +90,8 @@ func TestHandlerOidcStateValid(t *testing.T) {
 }
 
 func TestHandlerWebsocket(t *testing.T) {
+	t.SkipNow()
+
 	server := httptest.NewServer(testMux)
 	x, y, err := websocket.DefaultDialer.Dial(strings.Replace(server.URL, "http://", "ws://", 1)+"/", http.Header{"Host": []string{"echo.websocket.org"}})
 	assert.NoError(t, err)

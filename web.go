@@ -17,6 +17,9 @@ func NewMux() http.Handler {
 
 	mux.HandleFunc(*host+"/launch", handleLaunch)
 	mux.HandleFunc(*host+"/oidc", handleOIDC)
+	if samlSP != nil {
+		mux.HandleFunc(*host+"/saml/", samlSP.ServeHTTP)
+	}
 
 	for _, ds := range dockerServers {
 		ds.RegisterHandlers(mux)

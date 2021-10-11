@@ -9,6 +9,12 @@
 			"revisionTime": "2019-12-09T09:45:21Z"
 		},
 		{
+			"checksumSHA1": "w36fQ7vjuWPjoYg8UiD/H2E7590=",
+			"path": "github.com/beevik/etree",
+			"revision": "4a2f8b9d084c5fffa2fe44a73bd8efaf7dcda53a",
+			"revisionTime": "2020-07-18T19:26:13Z"
+		},
+		{
 			"checksumSHA1": "tWlPZx8oT0cxGkACQ2uxlUuVlWE=",
 			"path": "github.com/cogolabs/wait",
 			"revision": "18b10c34d00e5dc856f6d5abc0b2355cf115bf44",
@@ -19,6 +25,36 @@
 			"path": "github.com/coreos/go-oidc",
 			"revision": "a4973d9a4225417aecf5d450a9522f00c1f7130f",
 			"revisionTime": "2017-07-11T23:37:13Z"
+		},
+		{
+			"checksumSHA1": "ftbd5ct1wgAfDcM/mlgsdhErMDQ=",
+			"path": "github.com/crewjam/httperr",
+			"revision": "2c16203749582999a04a7831644d5a0bcb43eaf0",
+			"revisionTime": "2020-02-18T20:45:51Z"
+		},
+		{
+			"checksumSHA1": "AxJQEY+YZy50asbjA8T1rUR671s=",
+			"path": "github.com/crewjam/saml",
+			"revision": "29c6295245bda6b40d9efb1dddaf7670ed782cb0",
+			"revisionTime": "2021-05-21T11:59:23Z"
+		},
+		{
+			"checksumSHA1": "lKNxxjwhZtBRpx6/uRQTL8EQ4Io=",
+			"path": "github.com/crewjam/saml/logger",
+			"revision": "29c6295245bda6b40d9efb1dddaf7670ed782cb0",
+			"revisionTime": "2021-05-21T11:59:23Z"
+		},
+		{
+			"checksumSHA1": "b3RSeP0X9UQsBvfj0hd8XdgmZLQ=",
+			"path": "github.com/crewjam/saml/samlsp",
+			"revision": "29c6295245bda6b40d9efb1dddaf7670ed782cb0",
+			"revisionTime": "2021-05-21T11:59:23Z"
+		},
+		{
+			"checksumSHA1": "QuQt4x9qQ3aBZxPmRk7K9RMu6Hs=",
+			"path": "github.com/crewjam/saml/xmlenc",
+			"revision": "29c6295245bda6b40d9efb1dddaf7670ed782cb0",
+			"revisionTime": "2021-05-21T11:59:23Z"
 		},
 		{
 			"checksumSHA1": "OFu4xJEIjiI8Suu+j/gabfp+y6Q=",
@@ -40,6 +76,12 @@
 			"revisionTime": "2018-07-20T17:25:06Z"
 		},
 		{
+			"checksumSHA1": "8vdwK8GQwZBCxjHss+SJL3+oySE=",
+			"path": "github.com/form3tech-oss/jwt-go",
+			"revision": "32ab6a8243d7efe20962a5a9df4cbca76db24973",
+			"revisionTime": "2021-08-09T14:49:07Z"
+		},
+		{
 			"checksumSHA1": "mo95lsTo6uV/Yw9IhdwEA2mKJHI=",
 			"path": "github.com/gorilla/securecookie",
 			"revision": "61b4ad17eb88d0d1118560d1101176279be2bc88",
@@ -50,6 +92,12 @@
 			"path": "github.com/gorilla/websocket",
 			"revision": "b65e62901fc1c0d968042419e74789f6af455eb9",
 			"revisionTime": "2020-03-19T17:50:51Z"
+		},
+		{
+			"checksumSHA1": "VnG7XhzQzPtnEMpwGHOQap7qjy4=",
+			"path": "github.com/jonboulle/clockwork",
+			"revision": "75ce4728e887d0503c30133699687076bb6beb43",
+			"revisionTime": "2020-09-29T17:17:40Z"
 		},
 		{
 			"checksumSHA1": "gk9mFFdthwYa9YEy3qC2NBB5dLY=",
@@ -80,6 +128,12 @@
 			"path": "github.com/mailru/easyjson/jwriter",
 			"revision": "f5d75e7e500c21faa7d1f653ab7e855b3eed6192",
 			"revisionTime": "2020-03-12T16:11:26Z"
+		},
+		{
+			"checksumSHA1": "AiaA626hWEQNPBgwapH5Fq25BZc=",
+			"path": "github.com/mattermost/xml-roundtrip-validator",
+			"revision": "8fd2afad43d104eeb8d281c6a399660974a965e5",
+			"revisionTime": "2020-12-19T04:09:09Z"
 		},
 		{
 			"checksumSHA1": "wWNdjQfaWdVnmWzfVoTupUqX7EU=",
@@ -131,6 +185,24 @@
 			"revisionTime": "2017-07-06T04:52:24Z"
 		},
 		{
+			"checksumSHA1": "j78aSa/pT4WFly03jRyBaSpReQI=",
+			"path": "github.com/russellhaering/goxmldsig",
+			"revision": "c4b12ffa5cef0ffc2e62b7a11d09584524a8ae18",
+			"revisionTime": "2021-09-10T03:43:56Z"
+		},
+		{
+			"checksumSHA1": "KqNGXiDR/7d/+ptTrV8TeLR1fNc=",
+			"path": "github.com/russellhaering/goxmldsig/etreeutils",
+			"revision": "c4b12ffa5cef0ffc2e62b7a11d09584524a8ae18",
+			"revisionTime": "2021-09-10T03:43:56Z"
+		},
+		{
+			"checksumSHA1": "q48t9CGpKDoGP/DwOSFvhxsx4oI=",
+			"path": "github.com/russellhaering/goxmldsig/types",
+			"revision": "c4b12ffa5cef0ffc2e62b7a11d09584524a8ae18",
+			"revisionTime": "2021-09-10T03:43:56Z"
+		},
+		{
 			"checksumSHA1": "5ANF5DkdOtBOcLbnktV+NKMUYp8=",
 			"path": "github.com/sirupsen/logrus",
 			"revision": "6699a89a232f3db797f2e280639854bbc4b89725",
@@ -141,6 +213,12 @@
 			"path": "github.com/stretchr/testify/assert",
 			"revision": "87a988cffbb945287b83c99ff8bd0c1de930dd85",
 			"revisionTime": "2020-06-28T12:02:02Z"
+		},
+		{
+			"checksumSHA1": "UAbH5s3v5AfEvbGMEQAyzSFCMU0=",
+			"path": "golang.org/x/crypto/ripemd160",
+			"revision": "eec23a3978adcfd26c29f4153eaa3e3d9b2cc53a",
+			"revisionTime": "2020-12-21T16:57:36Z"
 		},
 		{
 			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",

@@ -33,7 +33,7 @@ func federate(w http.ResponseWriter, r *http.Request) {
 	next := r.URL.Query().Get("next")
 	err := securecookie.DecodeMulti("next", next, &next, federateAccessCodec...)
 	if err != nil {
-		http.Error(w, err.Error(), 403)
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 

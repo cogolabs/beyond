@@ -11,18 +11,27 @@ import (
 
 func handleLaunch(w http.ResponseWriter, r *http.Request) {
 	setCacheControl(w)
-
 	session, err := store.Get(r, *cookieName)
 	if err != nil {
 		session = store.New(*cookieName)
 	}
+	if samlSP != nil && samlFilter(w, r) {
+		next, _ := session.Values["next"].(string)
+		jsRedirect(w, next)
+		return
+	}
+
 	session.Values["next"] = r.URL.Query().Get("next")
 	state, _ := randhex32()
 	session.Values["state"] = state
 	session.Save(w)
 
-	next := oidcConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
-	jsRedirect(w, next)
+	if *samlIDP == "" {
+		next := oidcConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
+		jsRedirect(w, next)
+	} else {
+		samlSP.HandleStartAuthFlow(w, r)
+	}
 }
 
 func handleOIDC(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +62,7 @@ func handleOIDC(w http.ResponseWriter, r *http.Request) {
 	session.Values["state"] = ""
 	session.Save(w)
 
-	http.Redirect(w, r, next, 302)
+	http.Redirect(w, r, next, http.StatusFound)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {

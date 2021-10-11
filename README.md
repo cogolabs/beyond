@@ -11,6 +11,7 @@ Control access to services beyond your perimeter network. Deploy with split-DNS 
 - Authenticate via:
   - OpenID Connect
   - OAuth2 Tokens
+  - SAMLv2
 - Automate Configuration w/ https://your.json
 - Customize Nexthop Learning (via Favorite Ports: 443, 80, ...)
 - Supports WebSockets
@@ -52,7 +53,7 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
   -docker-url string
     	when there is only one (legacy option) (default "https://docker.colofoo.net")
   -docker-urls string
-    	docker server base URLs, comma separated multiple (default "https://harbor.colofoo.net,https://ghcr.colofoo.net")
+    	comma separated docker server base URLs (default "https://harbor.colofoo.net,https://ghcr.colofoo.net")
   -error-color string
     	css h1 color for errors (default "#69b342")
   -error-email string
@@ -82,9 +83,9 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
   -learn-dial-timeout duration
     	skip port after this connection timeout (default 5s)
   -learn-http-ports string
-    	after HTTPS, try these HTTP ports (csv) (default "80,8080,6000,6060,7000,8000,9000,9200,15672")
+    	after HTTPS, try these HTTP ports (csv) (default "80,8080,6000,6060,7000,7070,8000,9000,9200,15672")
   -learn-https-ports string
-    	try learning these backend HTTPS ports (csv) (default "443,4443,6443,8443,9443")
+    	try learning these backend HTTPS ports (csv) (default "443,4443,6443,8443,9443,9090")
   -learn-nexthops
     	set false to require explicit whitelisting (default true)
   -log-elastic string
@@ -103,6 +104,14 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
     	include X-Forwarded-For in logs (default true)
   -oidc-issuer string
     	issuer URL provided by IdP (default "https://yourcompany.onelogin.com/oidc")
+  -saml-cert-file string
+    	Path to SP cert.pem (default "example/myservice.cert")
+  -saml-key-file string
+    	Path to SP key.pem (default "example/myservice.key")
+  -saml-metadata-url string
+    	Metadata URL for IdP (blank disables SAML)
+  -saml-sign-requests
+    	Sign Requests to IdP (default true)
   -server-idle-timeout duration
     	maximum amount of time to wait for the next request when keep-alives are enabled (default 3m0s)
   -server-read-timeout duration

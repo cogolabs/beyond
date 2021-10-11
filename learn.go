@@ -38,9 +38,8 @@ func learnBase(host string) string {
 		_, err := tls.DialWithDialer(&net.Dialer{Timeout: *learnDialTimeout}, "tcp", host, nil)
 		if err == nil {
 			return "https://" + host
-		} else {
-			return "http://" + host
 		}
+		return "http://" + host
 	}
 	for _, httpsPort := range strings.Split(*learnHTTPSPorts, ",") {
 		c, err := net.DialTimeout("tcp", host+":"+httpsPort, *learnDialTimeout)

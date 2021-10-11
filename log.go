@@ -15,6 +15,7 @@ import (
 )
 
 var (
+	// import logrus helpers
 	Error      = log.Error
 	WithError  = log.WithError
 	WithField  = log.WithField

@@ -33,6 +33,7 @@ var (
 	store *sessions.CookieStore
 )
 
+// Setup initializes all configured modules
 func Setup() error {
 	if len(*cookieKey1) == 0 {
 		return fmt.Errorf("missing cookie key")

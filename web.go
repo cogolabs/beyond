@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// NewMux mounts all configured web handlers
 func NewMux() http.Handler {
 	mux := http.NewServeMux()
 

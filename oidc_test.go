@@ -45,9 +45,9 @@ var (
 		}
 	}))
 	oidcWK = struct {
-		Issuer                 string
-		Authorization_endpoint string
-		Token_endpoint         string
+		Issuer                string
+		AuthorizationEndpoint string `json:"authorization_endpoint"`
+		TokenEndpoint         string `json:"token_endpoint"`
 	}{
 		"/issuer",
 		"/authorize",
@@ -86,8 +86,8 @@ func (o *oidcMock) Verify(ctx context.Context, raw string) (*oidc.IDToken, error
 func init() {
 	// *oidcIssuer = oidcServer.URL
 	oidcWK.Issuer = oidcServer.URL + oidcWK.Issuer
-	oidcWK.Token_endpoint = oidcServer.URL + oidcWK.Token_endpoint
-	oidcWK.Authorization_endpoint = oidcServer.URL + oidcWK.Authorization_endpoint
+	oidcWK.TokenEndpoint = oidcServer.URL + oidcWK.TokenEndpoint
+	oidcWK.AuthorizationEndpoint = oidcServer.URL + oidcWK.AuthorizationEndpoint
 }
 
 func TestOIDCSetup(t *testing.T) {

@@ -16,6 +16,8 @@ import (
 var (
 	samlCert = flag.String("saml-cert-file", "example/myservice.cert", "Path to SP cert.pem")
 	samlKey  = flag.String("saml-key-file", "example/myservice.key", "Path to SP key.pem")
+
+	samlID   = flag.String("saml-entity-id", "", "Entity ID (blank defaults to beyond realm)")
 	samlIDP  = flag.String("saml-metadata-url", "", "Metadata URL for IdP (blank disables SAML)")
 	samlSign = flag.Bool("saml-sign-requests", true, "Sign Requests to IdP")
 
@@ -25,6 +27,9 @@ var (
 func samlSetup() error {
 	if *samlIDP == "" {
 		return nil
+	}
+	if *samlID == "" {
+		*samlID = *host
 	}
 
 	keyPair, err := tls.LoadX509KeyPair(*samlCert, *samlKey)
@@ -52,7 +57,7 @@ func samlSetup() error {
 		return err
 	}
 	samlSP, err = samlsp.New(samlsp.Options{
-		EntityID:    *host,
+		EntityID:    *samlID,
 		SignRequest: *samlSign,
 		URL:         *rootURL,
 

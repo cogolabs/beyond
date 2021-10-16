@@ -12,9 +12,9 @@ import (
 var (
 	bind = flag.String("http", ":80", "listen address")
 
-	srvReadTimeout  = flag.Duration("server-read-timeout", 1*time.Minute, "maximum duration for reading the entire request, including the body")
-	srvWriteTimeout = flag.Duration("server-write-timeout", 2*time.Minute, "maximum duration before timing out writes of the response")
-	srvIdleTimeout  = flag.Duration("server-idle-timeout", 3*time.Minute, "maximum amount of time to wait for the next request when keep-alives are enabled")
+	srvReadTimeout  = flag.Duration("server-read-timeout", 1*time.Minute, "max duration for reading the entire request, including the body")
+	srvWriteTimeout = flag.Duration("server-write-timeout", 2*time.Minute, "max duration before timing out writes of the response")
+	srvIdleTimeout  = flag.Duration("server-idle-timeout", 3*time.Minute, "max time to wait for the next request when keep-alives are enabled")
 )
 
 func main() {

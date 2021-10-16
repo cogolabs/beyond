@@ -11,15 +11,18 @@ import (
 
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlsp"
+	"github.com/pkg/errors"
 )
 
 var (
-	samlCert = flag.String("saml-cert-file", "example/myservice.cert", "Path to SP cert.pem")
-	samlKey  = flag.String("saml-key-file", "example/myservice.key", "Path to SP key.pem")
+	samlCert = flag.String("saml-cert-file", "example/myservice.cert", "SAML SP path to cert.pem")
+	samlKey  = flag.String("saml-key-file", "example/myservice.key", "SAML SP path to key.pem")
 
-	samlID   = flag.String("saml-entity-id", "", "Entity ID (blank defaults to beyond realm)")
-	samlIDP  = flag.String("saml-metadata-url", "", "Metadata URL for IdP (blank disables SAML)")
-	samlSign = flag.Bool("saml-sign-requests", true, "Sign Requests to IdP")
+	samlID  = flag.String("saml-entity-id", "", "SAML SP entity ID (blank defaults to beyond-host)")
+	samlIDP = flag.String("saml-metadata-url", "", "SAML metadata URL from IdP (blank disables SAML)")
+
+	samlNIDF = flag.String("saml-nameid-format", "unspecified", "SAML SP NameID format: {unspecified, email, persistent, transient}")
+	samlSign = flag.Bool("saml-sign-requests", true, "SAML SP signs authentication requests")
 
 	samlSP *samlsp.Middleware
 )
@@ -71,7 +74,19 @@ func samlSetup() error {
 		return err
 	}
 
-	samlSP.ServiceProvider.AuthnNameIDFormat = saml.PersistentNameIDFormat
+	switch *samlNIDF {
+	case "email":
+		samlSP.ServiceProvider.AuthnNameIDFormat = saml.EmailAddressNameIDFormat
+	case "persistent":
+		samlSP.ServiceProvider.AuthnNameIDFormat = saml.PersistentNameIDFormat
+	case "transient":
+		samlSP.ServiceProvider.AuthnNameIDFormat = saml.TransientNameIDFormat
+	case "unspecified":
+		samlSP.ServiceProvider.AuthnNameIDFormat = saml.UnspecifiedNameIDFormat
+	case "":
+	default:
+		return errors.Errorf("invalid nameid format: \"%s\"", *samlNIDF)
+	}
 	return nil
 }
 

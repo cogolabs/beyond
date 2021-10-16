@@ -18,8 +18,8 @@ import (
 // via https://docs.docker.com/registry/spec/auth/token/
 
 var (
-	dockerBase   = flag.String("docker-url", "https://docker.colofoo.net", "when there is only one (legacy option)")
-	dockerURLs   = flag.String("docker-urls", "https://harbor.colofoo.net,https://ghcr.colofoo.net", "comma separated docker server base URLs")
+	dockerBase   = flag.String("docker-url", "https://docker.myorg.net", "when there is only one (legacy option)")
+	dockerURLs   = flag.String("docker-urls", "https://harbor.myorg.net,https://ghcr.myorg.net", "csv of docker server base URLs")
 	dockerScheme = flag.String("docker-auth-scheme", "https", "(only for testing)")
 
 	dockerServers = map[string]*dockerServer{}

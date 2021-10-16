@@ -12,18 +12,18 @@ import (
 )
 
 var (
-	host = flag.String("host", "beyond.colofoo.net", "hostname of self, eg. when generating OAuth redirect URLs")
+	host = flag.String("beyond-host", "beyond.myorg.net", "hostname of self")
 
 	healthPath  = flag.String("health-path", "/healthz/ping", "URL of the health endpoint")
 	healthReply = flag.String("health-reply", "ok", "response body of the health endpoint")
 
 	cookieAge  = flag.Int("cookie-age", 3600*6, "MaxAge setting in seconds")
-	cookieDom  = flag.String("cookie-domain", ".colofoo.net", "session cookie domain")
+	cookieDom  = flag.String("cookie-domain", ".myorg.net", "session cookie domain")
 	cookieKey1 = flag.String("cookie-key1", "", `key1 of cookie crypto pair (example: "t8yG1gmeEyeb7pQpw544UeCTyDfPkE6u")`)
 	cookieKey2 = flag.String("cookie-key2", "", `key2 of cookie crypto pair (example: "Q599vrruZRhLFC144thCRZpyHM7qGDjt")`)
 	cookieName = flag.String("cookie-name", "beyond", "session cookie name")
 
-	fouroFourMessage = flag.String("404-message", "Please contact your network administrators to whitelist this system.", "message to use for unlisted hosts when learning is disabled or fails")
+	fouroFourMessage = flag.String("404-message", "Please contact the application administrators to setup access.", "message to use when backend apps do not respond")
 	fouroOneCode     = flag.Int("401-code", 418, "status to respond when a user needs authentication")
 	headerPrefix     = flag.String("header-prefix", "Beyond", "prefix extra headers with this string")
 

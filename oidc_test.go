@@ -7,12 +7,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strings"
 	"testing"
 	"time"
 
-	"bou.ke/monkey"
 	oidc "github.com/coreos/go-oidc"
 	"github.com/drewolson/testflight"
 	"github.com/gorilla/securecookie"
@@ -75,11 +73,16 @@ func (o *oidcMock) Verify(ctx context.Context, raw string) (*oidc.IDToken, error
 	}
 	token := &oidc.IDToken{}
 
-	// requires gcflags=-l
-	monkey.PatchInstanceMethod(reflect.TypeOf(token), "Claims", func(t *oidc.IDToken, v interface{}) error {
-		v.(*oidcClaims).Email = "user3@domain3.com"
+	getOIDCClaims = func(claims *oidcClaims, tokenID *oidc.IDToken) error {
+		claims.Email = "user3@domain3.com"
 		return nil
-	})
+	}
+	if raw == "claimsErr" {
+		getOIDCClaims = func(claims *oidcClaims, tokenID *oidc.IDToken) error {
+			return fmt.Errorf("test error")
+		}
+	}
+
 	return token, nil
 }
 
@@ -138,5 +141,14 @@ func TestOIDCVerifyToken(t *testing.T) {
 func TestOIDCVerifyTokenID(t *testing.T) {
 	email, err := oidcVerifyTokenID(context.TODO(), "err")
 	assert.Equal(t, "", email)
+	assert.Equal(t, http.ErrHijacked, err)
+
+	testErr := fmt.Errorf("test error")
+	email, err = oidcVerifyTokenID(context.TODO(), "claimsErr")
+	assert.Equal(t, "", email)
+	assert.Equal(t, testErr, err)
+
+	email, err = oidcVerifyTokenID(context.TODO(), "rawID")
+	assert.Equal(t, "user3@domain3.com", email)
 	assert.NoError(t, err)
 }

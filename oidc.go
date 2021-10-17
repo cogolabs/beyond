@@ -16,6 +16,8 @@ var (
 
 	oidcConfig   oidcConfigI
 	oidcVerifier oidcVerifierI
+
+	getOIDCClaims = parseClaims
 )
 
 type oidcClaims struct {
@@ -77,11 +79,18 @@ func oidcVerifyToken(ctx context.Context, token *oauth2.Token) (string, error) {
 
 func oidcVerifyTokenID(ctx context.Context, rawID string) (string, error) {
 	var err error
-	if tokenID, err := oidcVerifier.Verify(ctx, rawID); err == nil {
-		claims := new(oidcClaims)
-		if err = tokenID.Claims(claims); err == nil {
-			return claims.Email, nil
-		}
+	tokenID, err := oidcVerifier.Verify(ctx, rawID)
+	if err != nil {
+		return "", err
 	}
-	return "", err
+	claims := new(oidcClaims)
+	err = getOIDCClaims(claims, tokenID)
+	if err != nil {
+		return "", err
+	}
+	return claims.Email, nil
+}
+
+func parseClaims(claims *oidcClaims, tokenID *oidc.IDToken) error {
+	return tokenID.Claims(claims)
 }

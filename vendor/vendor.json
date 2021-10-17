@@ -3,12 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "or5OZiSOEunI60gS7zJG+bI0MSQ=",
-			"path": "bou.ke/monkey",
-			"revision": "b118a17387657e860bb85a0f3dafd15cad03c266",
-			"revisionTime": "2019-12-09T09:45:21Z"
-		},
-		{
 			"checksumSHA1": "w36fQ7vjuWPjoYg8UiD/H2E7590=",
 			"path": "github.com/beevik/etree",
 			"revision": "4a2f8b9d084c5fffa2fe44a73bd8efaf7dcda53a",

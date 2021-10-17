@@ -21,7 +21,7 @@ var (
 	samlID  = flag.String("saml-entity-id", "", "SAML SP entity ID (blank defaults to beyond-host)")
 	samlIDP = flag.String("saml-metadata-url", "", "SAML metadata URL from IdP (blank disables SAML)")
 
-	samlNIDF = flag.String("saml-nameid-format", "unspecified", "SAML SP NameID format: {unspecified, email, persistent, transient}")
+	samlNIDF = flag.String("saml-nameid-format", "email", "SAML SP NameID format: {email, persistent, transient, unspecified}")
 	samlSign = flag.Bool("saml-sign-requests", true, "SAML SP signs authentication requests")
 
 	samlSP *samlsp.Middleware

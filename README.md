@@ -113,7 +113,7 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
   -saml-metadata-url string
     	SAML metadata URL from IdP (blank disables SAML)
   -saml-nameid-format string
-    	SAML SP NameID format: {unspecified, email, persistent, transient} (default "unspecified")
+    	SAML SP NameID format: {email, persistent, transient, unspecified} (default "email")
   -saml-sign-requests
     	SAML SP signs authentication requests (default true)
   -server-idle-timeout duration

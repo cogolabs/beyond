@@ -24,6 +24,7 @@ var (
 	samlIDP = flag.String("saml-metadata-url", "", "SAML metadata URL from IdP (blank disables SAML)")
 
 	samlNIDF = flag.String("saml-nameid-format", "email", "SAML SP option: {email, persistent, transient, unspecified}")
+	samlAttr = flag.String("saml-session-key", "email", "SAML attribute to map from session")
 
 	samlSignRequests = flag.Bool("saml-sign-requests", false, "SAML SP signs authentication requests")
 	samlSignMethod   = flag.String("saml-signature-method", "", "SAML SP option: {sha1, sha256, sha512}")
@@ -109,11 +110,13 @@ func samlSetup() error {
 func samlFilter(w http.ResponseWriter, r *http.Request) bool {
 	samlSession, _ := samlSP.Session.GetSession(r)
 	if _, ok := samlSession.(samlsp.SessionWithAttributes); !ok {
+		// sessions without mappings will redirect infinitely
 		return false
 	}
 	samlAttributes := samlSession.(samlsp.SessionWithAttributes).GetAttributes()
-	email := samlAttributes.Get("email")
-	if email == "" {
+	user := samlAttributes.Get(*samlAttr)
+	if user == "" {
+		// nil IdP assertion unlikely
 		return false
 	}
 
@@ -121,7 +124,7 @@ func samlFilter(w http.ResponseWriter, r *http.Request) bool {
 	if err != nil {
 		session = store.New(*cookieName)
 	}
-	session.Values["user"] = email
+	session.Values["user"] = user
 	session.Save(w)
 	samlSP.Session.DeleteSession(w, r)
 	return true

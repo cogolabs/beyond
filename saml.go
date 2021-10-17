@@ -12,6 +12,8 @@ import (
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlsp"
 	"github.com/pkg/errors"
+
+	dsig "github.com/russellhaering/goxmldsig"
 )
 
 var (
@@ -21,8 +23,10 @@ var (
 	samlID  = flag.String("saml-entity-id", "", "SAML SP entity ID (blank defaults to beyond-host)")
 	samlIDP = flag.String("saml-metadata-url", "", "SAML metadata URL from IdP (blank disables SAML)")
 
-	samlNIDF = flag.String("saml-nameid-format", "email", "SAML SP NameID format: {email, persistent, transient, unspecified}")
-	samlSign = flag.Bool("saml-sign-requests", true, "SAML SP signs authentication requests")
+	samlNIDF = flag.String("saml-nameid-format", "email", "SAML SP option: {email, persistent, transient, unspecified}")
+
+	samlSignRequests = flag.Bool("saml-sign-requests", false, "SAML SP signs authentication requests")
+	samlSignMethod   = flag.String("saml-signature-method", "", "SAML SP option: {sha1, sha256, sha512}")
 
 	samlSP *samlsp.Middleware
 )
@@ -61,7 +65,7 @@ func samlSetup() error {
 	}
 	samlSP, err = samlsp.New(samlsp.Options{
 		EntityID:    *samlID,
-		SignRequest: *samlSign,
+		SignRequest: *samlSignRequests,
 		URL:         *rootURL,
 
 		Certificate: keyPair.Leaf,
@@ -85,7 +89,19 @@ func samlSetup() error {
 		samlSP.ServiceProvider.AuthnNameIDFormat = saml.UnspecifiedNameIDFormat
 	case "":
 	default:
-		return errors.Errorf("invalid nameid format: \"%s\"", *samlNIDF)
+		return errors.Errorf("invalid saml-nameid-format: \"%s\"", *samlNIDF)
+	}
+
+	switch *samlSignMethod {
+	case "sha1":
+		samlSP.ServiceProvider.SignatureMethod = dsig.RSASHA1SignatureMethod
+	case "sha256":
+		samlSP.ServiceProvider.SignatureMethod = dsig.RSASHA256SignatureMethod
+	case "sha512":
+		samlSP.ServiceProvider.SignatureMethod = dsig.RSASHA512SignatureMethod
+	case "":
+	default:
+		return errors.Errorf("invalid saml-signature-method: \"%s\"", *samlSignMethod)
 	}
 	return nil
 }

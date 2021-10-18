@@ -32,17 +32,18 @@ func learn(host string) http.Handler {
 
 func learnBase(host string) string {
 	if strings.Contains(host, ":") {
-		if strings.HasPrefix(host, "http") {
+		if strings.HasPrefix(host, "https:") || strings.HasPrefix(host, "http:") {
 			return host
 		}
-		_, err := tls.DialWithDialer(&net.Dialer{Timeout: *learnDialTimeout}, "tcp", host, nil)
+		c, err := tls.DialWithDialer(&net.Dialer{Timeout: *learnDialTimeout}, "tcp", host, tlsConfig)
 		if err == nil {
+			c.Close()
 			return "https://" + host
 		}
 		return "http://" + host
 	}
 	for _, httpsPort := range strings.Split(*learnHTTPSPorts, ",") {
-		c, err := net.DialTimeout("tcp", host+":"+httpsPort, *learnDialTimeout)
+		c, err := tls.DialWithDialer(&net.Dialer{Timeout: *learnDialTimeout}, "tcp", host+":"+httpsPort, tlsConfig)
 		if err == nil {
 			c.Close()
 			if httpsPort == "443" {

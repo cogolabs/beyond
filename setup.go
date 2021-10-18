@@ -31,6 +31,8 @@ var (
 	wsCompress = flag.Bool("websocket-compression", false, "allow websocket transport compression (gorilla/experimental)")
 
 	store *sessions.CookieStore
+
+	tlsConfig = &tls.Config{}
 )
 
 // Setup initializes all configured modules
@@ -48,11 +50,8 @@ func Setup() error {
 	store.Config.Secure = true
 
 	// setup backend encryption
-	http.DefaultTransport = &http.Transport{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: *skipVerify,
-		},
-	}
+	tlsConfig.InsecureSkipVerify = *skipVerify
+	http.DefaultTransport = &http.Transport{TLSClientConfig: tlsConfig}
 
 	// setup websockets
 	if websocketproxy.DefaultDialer.TLSClientConfig == nil {

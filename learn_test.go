@@ -6,10 +6,26 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/inetaf/tcpproxy"
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	proxy tcpproxy.Proxy
+)
+
+func init() {
+	proxy.AddRoute("127.0.0.1:9443", tcpproxy.To("1.1.1.1:443"))
+}
+
+func TestLearnProxy(t *testing.T) {
+	tlsConfig.InsecureSkipVerify = true
+	assert.NoError(t, proxy.Start())
+}
+
 func TestLearnHostScheme(t *testing.T) {
+	assert.Equal(t, "https://localhost:9443", learnBase("localhost"))
+
 	ports1 := *learnHTTPSPorts
 	ports2 := *learnHTTPPorts
 
@@ -21,7 +37,7 @@ func TestLearnHostScheme(t *testing.T) {
 	learnTest1.Close()
 	base2 := learnBase("127.0.0.1")
 	learnTest2.Close()
-	assert.Equal(t, strings.Replace(learnTest1.URL, "http://", "https://", 1), base1)
+	assert.Equal(t, learnTest2.URL, base1)
 	assert.Equal(t, learnTest2.URL, base2)
 
 	*learnHTTPSPorts = ""

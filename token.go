@@ -12,6 +12,7 @@ import (
 
 var (
 	tokenBase = flag.String("token-base", "", "token server URL prefix (eg. https://api.github.com/user?access_token=)")
+	tokenPost = flag.Bool("token-post", true, "POST token as Bearer instead of query string")
 
 	tokenCache = cache.New(10*time.Minute, 10*time.Minute)
 
@@ -48,10 +49,26 @@ func tokenAuth(r *http.Request) string {
 			return v
 		}
 	}
-	resp, err := http.Get(*tokenBase + token)
-	if err != nil {
-		Error(err)
-		return ""
+	var err error
+	var resp *http.Response
+	if *tokenPost {
+		req, err := http.NewRequest("POST", *tokenBase, nil)
+		if err != nil {
+			Error(err)
+			return ""
+		}
+		req.Header.Set("Authorization", "Bearer "+token)
+		resp, err = http.DefaultClient.Do(req)
+		if err != nil {
+			Error(err)
+			return ""
+		}
+	} else {
+		resp, err = http.Get(*tokenBase + token)
+		if err != nil {
+			Error(err)
+			return ""
+		}
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {

@@ -11,11 +11,11 @@ import (
 var (
 	fenceURL     = flag.String("fence-url", "", "URL to user fencing config (eg. https://github.com/myorg/beyond-config/main/raw/fence.json)")
 	sitesURL     = flag.String("sites-url", "", "URL to allowed sites config (eg. https://github.com/myorg/beyond-config/main/raw/sites.json)")
-	whitelistURL = flag.String("whitelist-url", "", "URL to site whitelist (eg. https://github.com/myorg/beyond-config/main/raw/whitelist.json)")
+	allowlistURL = flag.String("allowlist-url", "", "URL to site allowlist (eg. https://github.com/myorg/beyond-config/main/raw/allowlist.json)")
 
 	fence     = concurrentMapMapBool{m: map[string]map[string]bool{}}
 	sites     = concurrentMapMapBool{m: map[string]map[string]bool{}}
-	whitelist = concurrentMapMapBool{m: map[string]map[string]bool{}}
+	allowlist = concurrentMapMapBool{m: map[string]map[string]bool{}}
 
 	httpACL = &http.Client{}
 )
@@ -79,27 +79,27 @@ func refreshSites() error {
 	return nil
 }
 
-func refreshWhitelist() error {
-	if *whitelistURL == "" {
+func refreshAllowlist() error {
+	if *allowlistURL == "" {
 		return nil
 	}
 
-	resp, err := httpACL.Get(*whitelistURL)
+	resp, err := httpACL.Get(*allowlistURL)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	whitelist.Lock()
-	defer whitelist.Unlock()
-	return json.NewDecoder(resp.Body).Decode(&whitelist.m)
+	allowlist.Lock()
+	defer allowlist.Unlock()
+	return json.NewDecoder(resp.Body).Decode(&allowlist.m)
 }
 
-func whitelisted(r *http.Request) bool {
-	whitelist.RLock()
-	allow := whitelist.m["host"][r.Host]
-	hostM := whitelist.m["host:method"][r.Host+":"+r.Method]
-	paths := whitelist.m["path"]
-	whitelist.RUnlock()
+func allowlisted(r *http.Request) bool {
+	allowlist.RLock()
+	allow := allowlist.m["host"][r.Host]
+	hostM := allowlist.m["host:method"][r.Host+":"+r.Method]
+	paths := allowlist.m["path"]
+	allowlist.RUnlock()
 	if allow || hostM {
 		return true
 	}

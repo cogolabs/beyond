@@ -30,10 +30,10 @@ var (
 			}
 			return
 		}
+		authorization := r.Header.Get("Authorization")
 		user := tokenTestTokenUsers[r.URL.Query().Get("access_token")]
-		if user == "" {
-			w.WriteHeader(403)
-			return
+		if user == "" && strings.Contains(authorization, " ") {
+			user = tokenTestTokenUsers[strings.Split(authorization, " ")[1]]
 		}
 		err := json.NewEncoder(w).Encode(tokenUser{Login: user})
 		if err != nil {

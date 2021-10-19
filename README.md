@@ -83,7 +83,7 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
   -learn-https-ports string
     	try learning these backend HTTPS ports (csv) (default "443,4443,6443,8443,9443,9090")
   -learn-nexthops
-    	set false to require explicit whitelisting (default true)
+    	set false to require explicit allowlisting (default true)
   -log-elastic string
     	csv of elasticsearch servers
   -log-elastic-interval duration
@@ -131,6 +131,6 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
     	token server URL prefix (eg. https://api.github.com/user?access_token=)
   -websocket-compression
     	allow websocket transport compression (gorilla/experimental)
-  -whitelist-url string
-    	URL to site whitelist (eg. https://github.com/myorg/beyond-config/main/raw/whitelist.json)
+  -allowlist-url string
+    	URL to site allowlist (eg. https://github.com/myorg/beyond-config/main/raw/allowlist.json)
 ```

@@ -106,7 +106,7 @@ func TestHandlerWebsocket(t *testing.T) {
 	server.Close()
 }
 
-func TestHandlerWhitelist(t *testing.T) {
+func TestHandlerAllowlist(t *testing.T) {
 	testflight.WithServer(testMux, func(r *testflight.Requester) {
 		request, err := http.NewRequest("GET", "/", nil)
 		assert.Nil(t, err)

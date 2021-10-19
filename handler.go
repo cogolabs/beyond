@@ -81,8 +81,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		r.Header.Set(*headerPrefix+"-User", user)
 	}
 
-	// apply whitelist
-	if whitelisted(r) {
+	// apply allowlist
+	if allowlisted(r) {
 		nexthop(w, r)
 		return
 	}

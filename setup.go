@@ -90,7 +90,7 @@ func Setup() error {
 		err = refreshSites()
 	}
 	if err == nil {
-		err = refreshWhitelist()
+		err = refreshAllowlist()
 	}
 	if err == nil {
 		err = reproxy()

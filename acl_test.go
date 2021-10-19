@@ -21,37 +21,37 @@ const (
 func TestACL(t *testing.T) {
 	*fenceURL = ""
 	*sitesURL = ""
-	*whitelistURL = ""
+	*allowlistURL = ""
 
 	assert.NoError(t, refreshFence())
 	assert.NoError(t, refreshSites())
-	assert.NoError(t, refreshWhitelist())
+	assert.NoError(t, refreshAllowlist())
 
 	*fenceURL = aclErrorBase
 	*sitesURL = aclErrorBase
-	*whitelistURL = aclErrorBase
+	*allowlistURL = aclErrorBase
 
 	assert.Contains(t, refreshFence().Error(), "connection refused")
 	assert.Contains(t, refreshSites().Error(), "connection refused")
-	assert.Contains(t, refreshWhitelist().Error(), "connection refused")
+	assert.Contains(t, refreshAllowlist().Error(), "connection refused")
 
 	cwd, _ := os.Getwd()
 	*fenceURL = "file://" + cwd + "/example/error.json"
 	*sitesURL = "file://" + cwd + "/example/error.json"
-	*whitelistURL = "file://" + cwd + "/example/error.json"
+	*allowlistURL = "file://" + cwd + "/example/error.json"
 	assert.EqualError(t, refreshFence(), "unexpected EOF")
 	assert.EqualError(t, refreshSites(), "unexpected EOF")
-	assert.EqualError(t, refreshWhitelist(), "unexpected EOF")
+	assert.EqualError(t, refreshAllowlist(), "unexpected EOF")
 
 	*fenceURL = "file://" + cwd + "/example/fence.json"
 	*sitesURL = "file://" + cwd + "/example/sites.json"
-	*whitelistURL = "file://" + cwd + "/example/whitelist.json"
+	*allowlistURL = "file://" + cwd + "/example/allowlist.json"
 	assert.NoError(t, Setup())
 
 	assert.NotEmpty(t, fence.m)
 	assert.NotEmpty(t, sites.m["git"])
-	assert.NotEmpty(t, whitelist.m["host"])
-	assert.NotEmpty(t, whitelist.m["path"])
+	assert.NotEmpty(t, allowlist.m["host"])
+	assert.NotEmpty(t, allowlist.m["path"])
 
 	reqDeny, _ := http.NewRequest("GET", "https://deny", nil)
 	assert.True(t, deny(reqDeny, "consultant@gmail.com"))

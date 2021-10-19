@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/inetaf/tcpproxy"
 	"github.com/stretchr/testify/assert"
+	"inet.af/tcpproxy"
 )
 
 var (

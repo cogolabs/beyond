@@ -12,6 +12,8 @@ import (
 
 var (
 	tokenBase = flag.String("token-base", "", "token server URL prefix (eg. https://api.github.com/user)")
+	tokenGQL  = flag.String("token-graphql", "", "GraphQL URL for auth (eg. https://api.github.com/graphql)")
+	tokenGQLQ = flag.String("token-graphql-query", `{"query": "query { viewer { login }}"}`, "")
 
 	tokenCache = cache.New(10*time.Minute, 10*time.Minute)
 
@@ -21,8 +23,10 @@ var (
 	}
 )
 
+// {"data":{"viewer":{"login":"github[bot]"}}}
+
 func tokenAuth(r *http.Request) string {
-	if *tokenBase == "" {
+	if *tokenBase == "" && *tokenGQL == "" {
 		return ""
 	}
 
@@ -49,13 +53,28 @@ func tokenAuth(r *http.Request) string {
 		}
 	}
 
-	url := *tokenBase
-	method := "GET"
-	req, err := http.NewRequest(method, url, nil)
-	if err != nil {
-		Error(err)
-		return ""
+	var (
+		req *http.Request
+		err error
+	)
+
+	switch {
+	case *tokenGQL != "":
+		req, err = http.NewRequest("POST", *tokenGQL, strings.NewReader(*tokenGQLQ))
+		if err != nil {
+			Error(err)
+			return ""
+		}
+
+	default:
+		req, err = http.NewRequest("GET", *tokenBase, nil)
+		if err != nil {
+			Error(err)
+			return ""
+		}
+
 	}
+
 	req.Header.Set("Authorization", "Bearer "+token)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -68,17 +87,38 @@ func tokenAuth(r *http.Request) string {
 		return ""
 	}
 
-	v := &tokenUser{}
-	err = json.NewDecoder(resp.Body).Decode(v)
-	if err != nil {
-		Error(err)
-		return ""
+	switch {
+	case *tokenGQL != "":
+		v := new(gqlResponse)
+		err = json.NewDecoder(resp.Body).Decode(v)
+		if err != nil {
+			Error(err)
+			return ""
+		}
+		tokenCache.Set(token, v.Data.Viewer.Login, cache.DefaultExpiration)
+		return v.Data.Viewer.Login
+
+	default:
+		v := &tokenUser{}
+		err = json.NewDecoder(resp.Body).Decode(v)
+		if err != nil {
+			Error(err)
+			return ""
+		}
+		tokenCache.Set(token, v.Login, cache.DefaultExpiration)
+		return v.Login
 	}
-	tokenCache.Set(token, v.Login, cache.DefaultExpiration)
-	return v.Login
 }
 
 type tokenUser struct {
 	Login string
 	Email string
+}
+
+type gqlResponse struct {
+	Data struct {
+		Viewer struct {
+			Login string `json:"login"`
+		} `json:"viewer"`
+	} `json:"data"`
 }

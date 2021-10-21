@@ -34,6 +34,8 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
     	status to respond when a user needs authentication (default 418)
   -404-message string
     	message to use when backend apps do not respond (default "Please contact the application administrators to setup access.")
+  -allowlist-url string
+    	URL to site allowlist (eg. https://github.com/myorg/beyond-config/main/raw/allowlist.json)
   -beyond-host string
     	hostname of self (default "beyond.myorg.net")
   -cookie-age int
@@ -70,6 +72,8 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
     	URL of the health endpoint (default "/healthz/ping")
   -health-reply string
     	response body of the health endpoint (default "ok")
+  -home-url string
+    	redirect users here from root (default "https://google.com")
   -host-masq string
     	rewrite nexthop hosts (format: from1=to1,from2=to2)
   -http string
@@ -119,7 +123,8 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
   -saml-sign-requests
     	SAML SP signs authentication requests
   -saml-signature-method string
-    	SAML SP option: {sha1, sha256, sha512}  -server-idle-timeout duration
+    	SAML SP option: {sha1, sha256, sha512}
+  -server-idle-timeout duration
     	max time to wait for the next request when keep-alives are enabled (default 3m0s)
   -server-read-timeout duration
     	max duration for reading the entire request, including the body (default 1m0s)
@@ -128,9 +133,11 @@ $ docker run --rm -p 80:80 cogolabs/beyond httpd --help
   -sites-url string
     	URL to allowed sites config (eg. https://github.com/myorg/beyond-config/main/raw/sites.json)
   -token-base string
-    	token server URL prefix (eg. https://api.github.com/user?access_token=)
+    	token server URL prefix (eg. https://api.github.com/user)
+  -token-graphql string
+    	GraphQL URL for auth (eg. https://api.github.com/graphql)
+  -token-graphql-query string
+    	 (default "{\"query\": \"query { viewer { login }}\"}")
   -websocket-compression
     	allow websocket transport compression (gorilla/experimental)
-  -allowlist-url string
-    	URL to site allowlist (eg. https://github.com/myorg/beyond-config/main/raw/allowlist.json)
 ```

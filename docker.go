@@ -94,9 +94,9 @@ func (ds *dockerServer) ModifyResponse(resp *http.Response) error {
 
 func (ds *dockerServer) RegisterHandlers(mux *http.ServeMux) {
 	mux.HandleFunc(ds.host+"/", func(rw http.ResponseWriter, r *http.Request) {
-		ua := r.UserAgent()
+		ua := strings.ToLower(r.UserAgent())
 		ua1 := strings.HasPrefix(ua, "docker/")
-		ua2 := strings.HasPrefix(ua, "Go-")
+		ua2 := strings.HasPrefix(ua, "go-")
 		if !ua1 && !ua2 {
 			handler(rw, r)
 			return

@@ -9,9 +9,12 @@ import (
 
 	"github.com/dghubble/sessions"
 	"github.com/koding/websocketproxy"
+	"github.com/sirupsen/logrus"
 )
 
 var (
+	debug = flag.Bool("debug", true, "set debug loglevel")
+
 	host = flag.String("beyond-host", "beyond.myorg.net", "hostname of self")
 
 	healthPath  = flag.String("health-path", "/healthz/ping", "URL of the health endpoint")
@@ -37,6 +40,9 @@ var (
 
 // Setup initializes all configured modules
 func Setup() error {
+	if *debug {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
 	if len(*cookieKey1) == 0 {
 		return fmt.Errorf("missing cookie key")
 	}
@@ -65,6 +71,9 @@ func Setup() error {
 	dURLs := []string{*dockerBase}
 	if len(*dockerURLs) > 0 {
 		dURLs = append(dURLs, strings.Split(*dockerURLs, ",")...)
+	}
+	for _, k := range strings.Split(*ghpHost, ",") {
+		ghpHosts[k] = true
 	}
 
 	err := dockerSetup(dURLs...)

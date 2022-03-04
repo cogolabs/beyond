@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/securecookie"
+	log "github.com/sirupsen/logrus"
 )
 
 // via https://docs.docker.com/registry/spec/auth/token/
@@ -23,6 +24,9 @@ var (
 	dockerScheme = flag.String("docker-auth-scheme", "https", "(only for testing)")
 
 	dockerServers = map[string]*dockerServer{}
+
+	ghpHost  = flag.String("ghp-hosts", "ghp.myorg.net", "CSV of github packages domains")
+	ghpHosts = map[string]bool{}
 )
 
 func dockerSetup(urls ...string) error {
@@ -48,8 +52,12 @@ type dockerServer struct {
 
 func (ds *dockerServer) ModifyResponse(resp *http.Response) error {
 	logRoundtrip(resp)
+	if ghpHosts[resp.Request.Host] {
+		return nil
+	}
 
-	if resp.Header.Get("WWW-Authenticate") != "" {
+	wwwAuth := resp.Header.Get("WWW-Authenticate")
+	if wwwAuth != "" && strings.Contains(wwwAuth, "/v2/auth") {
 		resp.Header.Set("WWW-Authenticate", `Bearer realm="`+*dockerScheme+`://`+resp.Request.Host+`/v2/auth",service="`+ds.host+`"`)
 	}
 	if resp.Request.URL.Path != "/v2/auth" || resp.StatusCode != 200 {
@@ -93,19 +101,37 @@ func (ds *dockerServer) ModifyResponse(resp *http.Response) error {
 }
 
 func (ds *dockerServer) RegisterHandlers(mux *http.ServeMux) {
-	mux.HandleFunc(ds.host+"/", func(rw http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(ds.host+"/v2/", func(rw http.ResponseWriter, r *http.Request) {
 		ua := strings.ToLower(r.UserAgent())
 		ua1 := strings.HasPrefix(ua, "docker/")
-		ua2 := strings.HasPrefix(ua, "go-")
-		if !ua1 && !ua2 {
+		ua2 := strings.HasPrefix(ua, "docker-client/")
+		ua3 := strings.HasPrefix(ua, "go-")
+		if !ua1 && !ua2 && !ua3 {
 			handler(rw, r)
 			return
+		}
+		if *debug {
+			log.Debugf("[DS] %+v\n", r)
 		}
 		ds.ServeHTTP(rw, r)
 	})
 }
 
 func (ds *dockerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if ghpHosts[r.Host] {
+		if r.Header.Get("Authorization") == "" {
+			w.Header().Set("Docker-Distribution-API-Version", "registry/2.0")
+			w.Header().Set("WWW-Authenticate", `Basic realm="GitHub Package Registry"`)
+			w.WriteHeader(401)
+			return
+		} else if r.URL.Path == "/v2/" {
+			w.WriteHeader(200)
+			return
+		}
+		ds.proxy.ServeHTTP(w, r)
+		return
+	}
+
 	allow := r.URL.Path == "/v2/auth" && len(r.Header.Get("Authorization")) > 0
 	if !allow {
 		token := strings.Split(r.Header.Get("Authorization"), " ")

@@ -90,7 +90,6 @@ func NewProvider(ctx context.Context, issuer string) (*Provider, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "curl/7.51.0")
 	resp, err := doRequest(ctx, req)
 	if err != nil {
 		return nil, err
@@ -112,7 +111,7 @@ func NewProvider(ctx context.Context, issuer string) (*Provider, error) {
 		return nil, fmt.Errorf("oidc: failed to decode provider discovery object: %v", err)
 	}
 
-	if false && p.Issuer != issuer {
+	if p.Issuer != issuer {
 		return nil, fmt.Errorf("oidc: issuer did not match the issuer returned by provider, expected %q got %q", issuer, p.Issuer)
 	}
 	return &Provider{

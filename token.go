@@ -35,13 +35,13 @@ func tokenAuth(r *http.Request) string {
 		token = u
 	}
 	if token == "" {
+		token = r.URL.Query().Get("access_token")
+	}
+	if token == "" {
 		parts := strings.Split(r.Header.Get("Authorization"), " ")
 		if len(parts) > 1 && tokenTypes[strings.ToLower(parts[0])] {
 			token = parts[1]
 		}
-	}
-	if token == "" {
-		token = r.URL.Query().Get("access_token")
 	}
 	if token == "" {
 		return ""
